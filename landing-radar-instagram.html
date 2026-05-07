@@ -868,6 +868,14 @@
     body.light footer p { color: #6A6A82; }
     body.light footer .footer-logo { /* gradient stays the same */ }
 
+    /* ── LANG SWITCHER ── */
+    .lang-switcher { display: flex; gap: 4px; align-items: center; margin-right: 12px; }
+    .lang-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; transition: all 0.2s; font-family: inherit; }
+    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .lang-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(124,58,237,0.1); }
+    body.light .lang-btn { color: #6A6A82; }
+    body.light .lang-btn.active, body.light .lang-btn:hover { color: var(--accent); border-color: var(--accent); }
+
     /* ── PRICES: ocultar para mercado internacional
          Para reexibir: remover as 3 linhas abaixo ── */
     .plan-price,
@@ -890,7 +898,11 @@
 <nav>
   <div class="container inner">
     <span class="nav-logo">FIREMODE <span>SIGNAL</span></span>
-    <a href="#pricing" class="btn btn-primary">Ver Planos</a>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="pt">PT</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+    <a href="#pricing" class="btn btn-primary" data-i18n-html="nav.cta">Ver Planos</a>
   </div>
 </nav>
 
@@ -1486,6 +1498,356 @@
     });
   }, { threshold: 0.5 });
   sections.forEach(s => observer.observe(s));
+
+  /* ── i18n ── */
+  const i18n = {
+    pt: {
+      'nav.cta': 'Ver Planos',
+      'hero.titleMain': 'Pare de postar<br>no <span class="highlight">escuro.</span>',
+      'hero.titleReveal': 'Espione os líderes,<br>disseque os virais.',
+      'hero.tagline': 'Nós lemos o mercado. Você só publica.',
+      'hero.sub': 'Hoje você tem métricas, mas ninguém as interpreta por você. A cada 7 dias, o Firemode Signal entrega um relatório com o que está funcionando no seu mercado, o que seus concorrentes fazem de diferente, um plano de posts pronto e alertas quando um viral relevante aparece. Você lê, grava, posta. <strong>Nós fazemos o resto.</strong>',
+      'hero.cta': 'QUERO MEU SIGNAL AGORA',
+      'hero.video': 'Insira aqui o vídeo de apresentação do Firemode Signal',
+      'problem.tag': 'O Problema',
+      'problem.title': 'Seu Instagram pode estar<br>trabalhando <span class="highlight">contra você</span> — e o prejuízo é silencioso.',
+      'problem.sub': 'Postar sem diagnóstico é como dirigir no escuro. Você grava Reels, segue tendências e gasta horas editando, mas o resultado não aparece. O problema não é falta de esforço — e nem falta de dados. As plataformas entregam números de sobra. O que falta é saber o que eles significam e o que seus concorrentes estão fazendo que você não consegue ver.',
+      'pain': [
+        { h3: 'Você grava. Eles vendem.', p: 'Você postou 3 Reels esse mês. Nenhum passou de 500 views. Seu concorrente usou a mesma pauta e viralizou. A diferença não é talento — <strong>é saber ler o que o mercado já está sinalizando.</strong>' },
+        { h3: 'Curtidas não pagam contas', p: 'Engajamento bonito no dashboard, caixa vazio no banco. Seus posts atraem seguidores, mas <strong>não convertem em DMs, propostas ou vendas.</strong>' },
+        { h3: 'Invisível para quem compra', p: 'Quem visita seu perfil não entende o que você vende em 3 segundos — e vai embora. <strong>Sua bio está repelindo clientes</strong> sem que você perceba.' },
+        { h3: 'Produção no achismo', p: 'Horas perdidas tentando adivinhar o que vai funcionar. <strong>Enquanto você busca inspiração</strong>, seus concorrentes já estão publicando o que o mercado validou.' }
+      ],
+      'solution.tag': 'A Solução',
+      'solution.title': 'O Signal transforma a <span class="highlight">espionagem industrial</span><br>em um plano prático de 22 dias.',
+      'solution.sub': 'Enquanto você tenta adivinhar o que vai funcionar, os líderes do seu nicho já têm um mapa. O Signal coloca esse mapa na sua mão — com execução inclusa.',
+      'feat': [
+        { num: '01 — Espionagem', h3: 'Inteligência Competitiva 360º', p: 'Não apenas olhamos posts; nós dissecamos a engenharia por trás deles. Analisamos cada pixel do seu perfil e o dos seus concorrentes — da bio aos <strong>anúncios pagos no Meta e LinkedIn</strong> — para identificar exatamente onde o dinheiro está sendo colocado e o que está sendo ignorado.' },
+        { num: '02 — Engenharia Reversa', h3: 'Decodificação de Virais', p: 'Usamos tecnologia para transcrever e analisar os vídeos de maior retenção do seu nicho. Identificamos os <strong>ganchos, o tom de voz e os padrões</strong> que já foram validados pelo público para que você não precise inventar a roda.' },
+        { num: '03 — Diagnóstico', h3: 'Diagnóstico de Performance e Gap', p: 'Você recebe um <strong>relatório estratégico</strong> que aponta os gargalos que matam suas vendas e as necessidades reais da sua audiência.' },
+        { num: '04 — Execução', h3: 'Done-For-You — Feito para Você', p: 'Nós criamos tudo. Do roteiro baseado em dados até a edição final. Você apenas grava o bruto, nos envia e recebe de volta o vídeo com <strong>cortes de retenção, legendas dinâmicas e capas</strong>, mais um carrossel baseado no conteúdo — prontos para postar.' }
+      ],
+      'intel.tag': 'Por dentro do relatório',
+      'intel.title': 'O que está por trás<br><span class="highlight">de cada entrega</span>',
+      'intel.sub': 'Antes de entregar qualquer recomendação, fazemos um rastreamento completo do seu mercado. Veja o que analisamos:',
+      'intel': [
+        { h4: 'Anúncios pagos ativos', p: 'Sabemos exatamente o que seus concorrentes estão investindo para promover agora — não apenas o que postam de graça. Identificamos os criativos ativos, o formato e a mensagem que estão recebendo verba.' },
+        { h4: 'Vídeos virais transcritos', p: 'Transcrevemos os vídeos com maior retenção do seu nicho na íntegra. Identificamos o gancho dos primeiros 3 segundos, a estrutura, o ritmo de fala e o momento exato em que o público para de assistir.' },
+        { h4: 'Padrão de formatos e frequência', p: 'Mapeamos quais tipos de post geram mais salvamentos, compartilhamentos e comentários no seu nicho específico — e com que frequência os perfis que crescem de verdade publicam cada formato.' },
+        { h4: 'Diagnóstico de posicionamento', p: 'Lemos a bio, a promessa, o CTA e a linguagem dos perfis líderes do mercado — e comparamos com o seu. O que está claro, o que está confuso e o que está fazendo você perder clientes sem perceber.' }
+      ],
+      'intel.footer': 'Tudo isso é processado e transformado em um relatório com calendário editorial pronto, projeção de crescimento e alertas quando um viral relevante aparece no seu nicho. <strong>Não é opinião — é o que o mercado já sinalizou que funciona.</strong>',
+      'deliver.tag': 'O Que Você Recebe',
+      'deliver.title': 'A entrega de <span class="highlight">elite</span>',
+      'deliver': [
+        { h4: 'Diagnóstico de Posicionamento', p: 'Análise de Bio, promessa e clareza comercial.' },
+        { h4: 'Benchmark Competitivo', p: 'Comparação visual com perfis reais para identificar onde você pode se diferenciar.' },
+        { h4: 'Top Posts Dissecados', p: 'Leitura técnica dos conteúdos de maior performance seus e dos concorrentes.' },
+        { h4: 'Plano de Guerra de 22 Dias', p: 'Sprint dividido em posts de Atração, Autoridade e Conversão.' },
+        { h4: 'Roteiros Prontos', p: 'Scripts baseados em dados para gravar sem depender de inspiração.' },
+        { h4: 'Edição Automática', p: 'Cortes de respiro, legendas dinâmicas e capa de alto impacto inclusos.' }
+      ],
+      'test.tag': 'Resultados Reais',
+      'test.title': 'Quem já usou o <span class="highlight">Signal</span>',
+      'test.sub': 'Substitua pelos depoimentos reais dos seus primeiros clientes.',
+      'test': [
+        { result: '+340% de alcance em 22 dias', quote: '"Eu travava toda semana sem saber o que postar. Com o plano de guerra do Signal eu simplesmente executei. Na terceira semana meu Reel principal passou de 80 mil views."', name: 'Mariana C.', role: 'Mentora de Finanças Pessoais' },
+        { result: '3 novos clientes no 1º mês', quote: '"O diagnóstico me mostrou que minha bio estava afastando exatamente quem eu queria atrair. Corrigi em um dia. Em duas semanas já tinha fechado 3 contratos direto pelo Instagram."', name: 'Rafael S.', role: 'Consultor de Negócios' },
+        { result: 'De 2% para 11% de engajamento', quote: '"Tentei de tudo — cursos, agências, freelancers. O Signal foi o único serviço que chegou com dados reais do meu mercado e não com teorias genéricas."', name: 'Ana Paula T.', role: 'Especialista em Saúde Integrativa' }
+      ],
+      'pricing.tag': 'Planos e Investimento',
+      'pricing.title': 'Escolha seu nível de <span class="highlight">inteligência</span>',
+      'pricing.sub': 'Três planos desenhados para cada estágio da sua ambição. Sem mensalidades surpresa, sem contratos longos.',
+      'plan': [
+        { name: 'Signal Diagnostic', tagline: 'Identifique gargalos e corrija a rota imediatamente.', badge: '', features: ['Auditoria completa de Bio, últimos Posts e Posicionamento Estratégico', 'Benchmark visual de <strong>01 Concorrente</strong> direto', 'Análise de Métricas Principais (Engajamento e Mix de Formatos)', 'Mapa de <strong>03 Recomendações Práticas</strong> para execução imediata', '<strong>10 copies</strong> para Posts + <strong>10 roteiros</strong> para Reels no seu nicho'], cta: 'Quero o Diagnostic', profile: 'Para empreendedores e autônomos em fase inicial de ajuste de perfil.' },
+        { name: 'Signal Pro', tagline: 'Espionagem + execução mastigada para quem precisa de velocidade.', badge: 'Mais Popular', features: ['<strong>Tudo do Diagnostic</strong>, mais:', 'Benchmark com <strong>02 Concorrentes</strong> (Anúncios + Virais)', 'Sprint de Guerra de <strong>22 Dias</strong> (Atração, Autoridade e Conversão)', '<strong>10 Roteiros de Reels</strong> Dissecados (Ganchos, Falas e CTAs)', '<strong>05 Edições de Vídeo</strong> automáticas (Cortes, Legendas e Capas)', 'Diretrizes de Tom de Voz e SEO para Instagram'], cta: 'Quero o Signal Pro', profile: 'Para negócios que já faturam e precisam de escala sem agências caras.' },
+        { name: 'Signal Elite', tagline: 'Domínio total do nicho com inteligência em tempo real.', badge: '', features: ['<strong>Tudo do Signal Pro</strong>, mais:', 'Monitoramento mensal contínuo de até <strong>03 Concorrentes</strong>', '<strong>10 Edições de Vídeo</strong> incluídas por mês', '<strong>Canal VIP</strong> de Análise Instantânea: envie qualquer link e receba o roteiro adaptado na hora', 'Plano de Crescimento Estratégico <strong>30/60/90 dias</strong>', 'Bio Otimizada + Estratégia para Posts Fixados'], cta: 'Quero o Elite', profile: 'Para Mentores, Especialistas e Empresas que buscam o topo e delegação total.' }
+      ],
+      'method.tag': 'Como Funciona',
+      'method.title': '4 passos, <span class="highlight">zero complicação</span>',
+      'step': [
+        { h3: 'Briefing via WhatsApp', p: 'Sem formulários infinitos. Apenas o essencial para começar.' },
+        { h3: 'Processamento de Dados', p: 'Nossas APIs varrem anúncios e transcrições em tempo real.' },
+        { h3: 'Entrega Estratégica', p: 'Você recebe o plano e já começa a gravar os roteiros.' },
+        { h3: 'Edição Incluída', p: 'Mande o bruto, receba o post. Fricção zero na publicação.' }
+      ],
+      'method.note': 'A partir do vídeo editado, o Signal também gera <strong>posts e carrosséis prontos</strong> para reforçar a mesma mensagem — atacando todas as frentes de conteúdo de uma vez. O vídeo final é entregue otimizado para <strong>Instagram, TikTok, YouTube Shorts e LinkedIn</strong>. Uma gravação, múltiplas plataformas.',
+      'guarantee.label': 'Garantia de entrega',
+      'guarantee.title': 'Se não entregarmos tudo pronto em até 5 dias<br><strong style="-webkit-text-fill-color:#25D366; background:none; color:#25D366;">DEVOLVEMOS SEU DINHEIRO</strong>',
+      'guarantee.sub': 'Sem burocracia, sem perguntas. Confiança total na nossa execução.',
+      'faq.tag': 'FAQ',
+      'faq.title': 'Perguntas <span class="highlight">frequentes</span>',
+      'faq.sub': 'Todas as respostas antes de você decidir.',
+      'faq': [
+        { q: 'O que é exatamente o Firemode Signal?', a: 'O Firemode Signal não é uma ferramenta de agendamento ou um gerador de posts genéricos. Ele é uma infraestrutura de inteligência competitiva que espiona anúncios ativos (Meta e LinkedIn), transcreve vídeos virais dos seus <strong>Concorrentes</strong> e transforma esses dados em roteiros prontos e vídeos editados. É o fim do achismo estratégico para quem busca escala.' },
+        { q: 'Por que o serviço é operado 100% via WhatsApp?', a: 'Empresários de alto valor não têm tempo para aprender a usar dashboards complexos ou memorizar novas senhas. O Signal foi desenvolvido para ter fricção zero: você recebe os diagnósticos, envia seus vídeos brutos e recebe o material finalizado — tudo dentro de uma conversa no <strong>WhatsApp</strong>. Se você sabe encaminhar uma mensagem, você sabe operar nossa inteligência.' },
+        { q: 'Como funciona a edição de vídeo automática?', a: 'Após receber o roteiro estratégico baseado em dados, você grava o vídeo pelo celular e nos envia o arquivo bruto. Nosso sistema processa o vídeo aplicando cortes automáticos de respiro, inserindo legendas dinâmicas de alta retenção e gerando uma capa (thumbnail) com título de alto impacto. O foco é a performance algorítmica e a velocidade de postagem.' },
+        { q: 'O Signal garante o crescimento do meu perfil?', a: 'Nenhuma inteligência séria garante resultados sem a execução do cliente. O Signal entrega o diagnóstico preciso e o plano de guerra pronto, mas o resultado final depende da sua consistência em gravar e publicar. O que garantimos é que você parará de quebrar a cabeça com o que postar e passará a usar o que o mercado já validou como lucrativo.' },
+        { q: 'Eu preciso saber quem são meus Concorrentes?', a: 'Se você já os conhece, a análise será ainda mais cirúrgica. Caso contrário, nossas APIs identificam os líderes do seu nicho através de anúncios ativos e volumes de engajamento para realizar o benchmark competitivo de forma automática.' },
+        { q: 'Qual a diferença entre os planos Pro e Elite?', a: 'O <strong>Plano Pro</strong> é focado em quem quer um sprint imediato de 22 dias com 5 <strong>Edições</strong> de vídeo inclusas para validar o novo posicionamento.<br><br>O <strong>Plano Elite</strong> é focado em monitoramento contínuo e recorrência, oferecendo 10 <strong>Edições</strong> por mês e o Canal VIP de Análise Instantânea, onde você envia o link de qualquer postagem e o Signal devolve o roteiro adaptado na hora.' },
+        { q: 'Isso funciona para o meu nicho específico?', a: 'Sim. O Signal não entrega templates genéricos — ele analisa os concorrentes <strong>reais do seu mercado</strong>, não de um mercado parecido. Se existem líderes e conteúdos virais no seu nicho (e existem, em qualquer nicho), nossas APIs os encontram e o diagnóstico é feito com base neles. Já atendemos nichos como saúde, finanças, moda, advocacia, gastronomia, educação e consultoria B2B.' },
+        { q: 'Isso é para quem já tem um negócio grande ou serve para quem está começando?', a: 'Para os dois — mas de formas diferentes. Quem está começando usa o <strong>Signal Diagnostic</strong> para não errar o posicionamento desde o início e já sair com 20 roteiros prontos. Quem já fatura usa o <strong>Signal Pro ou Elite</strong> para escalar sem depender de agência cara ou de equipe grande. O denominador comum é que você precisa levar o Instagram a sério como canal de aquisição de clientes.' },
+        { q: 'O relatório é feito por Inteligência Artificial?', a: 'Utilizamos tecnologia de ponta e análise assistida por dados para capturar o que é invisível ao olho humano (como tags de anúncios e métricas de retenção), mas toda a entrega é estruturada sob uma lógica de negócio e conversão — para garantir que o conteúdo gere autoridade e lucro, não apenas curtidas.' }
+      ],
+      'cta.tag': 'Último passo',
+      'cta.title': 'Chega de postar no<br><span class="highlight">escuro.</span>',
+      'cta.sub': 'Enquanto você lê isso, seus concorrentes estão interpretando sinais que você ainda ignora. O Signal traduz esses sinais em conteúdo pronto — hoje, via <strong>WhatsApp</strong>.',
+      'cta.btn': 'FALAR COM O SIGNAL AGORA',
+      'cta.note': 'Resposta em até 2h em dias úteis · Sem compromisso inicial',
+      'footer.tagline': 'Inteligência competitiva para quem busca lucro, não apenas curtidas.',
+      'footer.copy': '© 2025 Firemode Signal. Todos os direitos reservados.'
+    },
+    en: {
+      'nav.cta': 'See Plans',
+      'hero.titleMain': 'Stop posting<br>in the <span class="highlight">dark.</span>',
+      'hero.titleReveal': 'Spy on leaders,<br>dissect what goes viral.',
+      'hero.tagline': 'We read the market. You just publish.',
+      'hero.sub': 'You have metrics, but no one interprets them for you. Every 7 days, Firemode Signal delivers a report on what\'s working in your market, what your competitors do differently, a ready-to-post content plan, and alerts when a relevant viral appears. You read, record, post. <strong>We do the rest.</strong>',
+      'hero.cta': 'GET MY SIGNAL NOW',
+      'hero.video': 'Insert your Firemode Signal presentation video here',
+      'problem.tag': 'The Problem',
+      'problem.title': 'Your Instagram may be working<br><span class="highlight">against you</span> — and the damage is silent.',
+      'problem.sub': 'Posting without diagnosis is like driving in the dark. You record Reels, follow trends, and spend hours editing — but results don\'t show up. The problem isn\'t lack of effort, nor lack of data. Platforms deliver plenty of numbers. What\'s missing is knowing what they mean and what your competitors are doing that you can\'t see.',
+      'pain': [
+        { h3: 'You post. They sell.', p: 'You posted 3 Reels this month. None broke 500 views. Your competitor used the same topic and went viral. The difference isn\'t talent — <strong>it\'s knowing how to read what the market is already signaling.</strong>' },
+        { h3: 'Likes don\'t pay bills', p: 'Great engagement on the dashboard, empty bank account. Your posts attract followers, but <strong>don\'t convert into DMs, proposals, or sales.</strong>' },
+        { h3: 'Invisible to buyers', p: 'Visitors to your profile don\'t understand what you sell within 3 seconds — and they leave. <strong>Your bio is repelling clients</strong> without you realizing it.' },
+        { h3: 'Guessing what to post', p: 'Hours wasted trying to figure out what will work. <strong>While you search for inspiration</strong>, your competitors are already publishing what the market has validated.' }
+      ],
+      'solution.tag': 'The Solution',
+      'solution.title': 'Signal turns <span class="highlight">competitive intelligence</span><br>into a practical 22-day plan.',
+      'solution.sub': 'While you try to guess what will work, the leaders in your niche already have a map. Signal puts that map in your hands — with execution included.',
+      'feat': [
+        { num: '01 — Intelligence', h3: '360º Competitive Intelligence', p: 'We don\'t just look at posts; we dissect the engineering behind them. We analyze every aspect of your profile and your competitors\' — from bio to <strong>paid ads on Meta and LinkedIn</strong> — to identify exactly where the money is going and what\'s being ignored.' },
+        { num: '02 — Reverse Engineering', h3: 'Viral Decoding', p: 'We use technology to transcribe and analyze the highest-retention videos in your niche. We identify the <strong>hooks, tone of voice, and patterns</strong> already validated by audiences so you don\'t have to reinvent the wheel.' },
+        { num: '03 — Diagnosis', h3: 'Performance & Gap Diagnosis', p: 'You receive a <strong>strategic report</strong> that pinpoints the bottlenecks killing your sales and the real needs of your audience.' },
+        { num: '04 — Execution', h3: 'Done-For-You', p: 'We create everything. From data-driven scripts to the final edit. You simply record the raw footage, send it to us, and receive the video back with <strong>retention cuts, dynamic captions, and covers</strong>, plus a carousel based on the content — ready to post.' }
+      ],
+      'intel.tag': 'Inside the report',
+      'intel.title': 'What\'s behind<br><span class="highlight">every delivery</span>',
+      'intel.sub': 'Before delivering any recommendation, we run a complete scan of your market. Here\'s what we analyze:',
+      'intel': [
+        { h4: 'Active paid ads', p: 'We know exactly what your competitors are investing to promote right now — not just what they post for free. We identify active creatives, format, and the message that\'s receiving budget.' },
+        { h4: 'Viral videos fully transcribed', p: 'We transcribe the highest-retention videos in your niche in full. We identify the hook in the first 3 seconds, structure, speech rhythm, and the exact moment when audiences stop watching.' },
+        { h4: 'Format and frequency patterns', p: 'We map which post types generate the most saves, shares, and comments in your specific niche — and how often profiles that are truly growing publish each format.' },
+        { h4: 'Positioning diagnosis', p: 'We read the bio, promise, CTA, and language of market-leading profiles — and compare them to yours. What\'s clear, what\'s confusing, and what\'s costing you clients without you noticing.' }
+      ],
+      'intel.footer': 'All of this is processed and turned into a report with a ready editorial calendar, growth projections, and alerts when a relevant viral appears in your niche. <strong>This isn\'t opinion — it\'s what the market has already signaled works.</strong>',
+      'deliver.tag': 'What You Get',
+      'deliver.title': 'The <span class="highlight">elite</span> delivery',
+      'deliver': [
+        { h4: 'Positioning Diagnosis', p: 'Bio, promise, and commercial clarity analysis.' },
+        { h4: 'Competitive Benchmark', p: 'Visual comparison with real profiles to identify where you can stand out.' },
+        { h4: 'Top Posts Dissected', p: 'Technical analysis of highest-performing content — yours and your competitors\'.' },
+        { h4: '22-Day Battle Plan', p: 'Sprint divided into Attraction, Authority, and Conversion posts.' },
+        { h4: 'Ready-to-Use Scripts', p: 'Data-driven scripts to record without relying on inspiration.' },
+        { h4: 'Automatic Editing', p: 'Breath cuts, dynamic captions, and high-impact cover included.' }
+      ],
+      'test.tag': 'Real Results',
+      'test.title': 'Who\'s already using <span class="highlight">Signal</span>',
+      'test.sub': 'Replace with testimonials from your first real clients.',
+      'test': [
+        { result: '+340% reach in 22 days', quote: '"I froze every week not knowing what to post. With Signal\'s battle plan I just executed. By the third week my main Reel had over 80k views."', name: 'Mariana C.', role: 'Personal Finance Mentor' },
+        { result: '3 new clients in month 1', quote: '"The diagnosis showed me my bio was pushing away exactly who I wanted to attract. Fixed it in a day. Two weeks later I\'d closed 3 contracts directly through Instagram."', name: 'Rafael S.', role: 'Business Consultant' },
+        { result: 'From 2% to 11% engagement', quote: '"I tried everything — courses, agencies, freelancers. Signal was the only service that came with real data from my market and not generic theories."', name: 'Ana Paula T.', role: 'Integrative Health Specialist' }
+      ],
+      'pricing.tag': 'Plans & Investment',
+      'pricing.title': 'Choose your level of <span class="highlight">intelligence</span>',
+      'pricing.sub': 'Three plans designed for each stage of your ambition. No surprise fees, no long contracts.',
+      'plan': [
+        { name: 'Signal Diagnostic', tagline: 'Identify bottlenecks and correct your course immediately.', badge: '', features: ['Complete Bio, recent Posts, and Strategic Positioning audit', 'Visual benchmark of <strong>1 direct competitor</strong>', 'Key Metrics Analysis (Engagement and Format Mix)', 'Map of <strong>3 Practical Recommendations</strong> for immediate execution', '<strong>10 post copies</strong> + <strong>10 Reels scripts</strong> for your niche'], cta: 'Get Diagnostic', profile: 'For entrepreneurs and freelancers in the initial profile adjustment phase.' },
+        { name: 'Signal Pro', tagline: 'Competitive intelligence + done-for-you execution for those who need speed.', badge: 'Most Popular', features: ['<strong>Everything in Diagnostic</strong>, plus:', 'Benchmark with <strong>2 competitors</strong> (Ads + Virals)', '<strong>22-Day Battle Sprint</strong> (Attraction, Authority and Conversion)', '<strong>10 Reels Scripts</strong> Dissected (Hooks, Lines and CTAs)', '<strong>5 Automatic Video Edits</strong> (Cuts, Captions and Covers)', 'Tone of Voice and SEO Guidelines for Instagram'], cta: 'Get Signal Pro', profile: 'For businesses already generating revenue that need scale without expensive agencies.' },
+        { name: 'Signal Elite', tagline: 'Total niche domination with real-time intelligence.', badge: '', features: ['<strong>Everything in Signal Pro</strong>, plus:', 'Continuous monthly monitoring of up to <strong>3 competitors</strong>', '<strong>10 Video Edits</strong> included per month', '<strong>VIP Channel</strong> for Instant Analysis: send any link and get the adapted script immediately', 'Strategic Growth Plan for <strong>30/60/90 days</strong>', 'Optimized Bio + Strategy for Pinned Posts'], cta: 'Get Elite', profile: 'For Mentors, Specialists, and Companies aiming for the top with full delegation.' }
+      ],
+      'method.tag': 'How It Works',
+      'method.title': '4 steps, <span class="highlight">zero friction</span>',
+      'step': [
+        { h3: 'WhatsApp Briefing', p: 'No endless forms. Just the essentials to get started.' },
+        { h3: 'Data Processing', p: 'Our APIs scan ads and transcriptions in real time.' },
+        { h3: 'Strategic Delivery', p: 'You receive the plan and start recording scripts.' },
+        { h3: 'Editing Included', p: 'Send the raw footage, receive the post. Zero friction.' }
+      ],
+      'method.note': 'From the edited video, Signal also generates <strong>ready posts and carousels</strong> to reinforce the same message — covering all content fronts at once. The final video is delivered optimized for <strong>Instagram, TikTok, YouTube Shorts, and LinkedIn</strong>. One recording, multiple platforms.',
+      'guarantee.label': 'Delivery guarantee',
+      'guarantee.title': 'If we don\'t deliver everything ready within 5 days<br><strong style="-webkit-text-fill-color:#25D366; background:none; color:#25D366;">WE REFUND YOUR MONEY</strong>',
+      'guarantee.sub': 'No bureaucracy, no questions. Full confidence in our execution.',
+      'faq.tag': 'FAQ',
+      'faq.title': 'Frequently asked <span class="highlight">questions</span>',
+      'faq.sub': 'All the answers before you decide.',
+      'faq': [
+        { q: 'What exactly is Firemode Signal?', a: 'Firemode Signal is not a scheduling tool or a generic post generator. It\'s a competitive intelligence infrastructure that monitors active ads (Meta and LinkedIn), transcribes viral videos from your <strong>Competitors</strong>, and turns that data into ready-to-use scripts and edited videos. The end of strategic guesswork for those seeking scale.' },
+        { q: 'Why is the service operated 100% via WhatsApp?', a: 'High-value business owners don\'t have time to learn complex dashboards or memorize new passwords. Signal was built for zero friction: you receive diagnoses, send raw videos, and get finished material — all within a WhatsApp conversation. If you know how to forward a message, you know how to operate our intelligence.' },
+        { q: 'How does automatic video editing work?', a: 'After receiving the data-driven script, you record the video on your phone and send us the raw file. Our system processes it by applying automatic breath cuts, inserting high-retention dynamic captions, and generating a high-impact cover (thumbnail). The focus is algorithmic performance and posting speed.' },
+        { q: 'Does Signal guarantee my profile\'s growth?', a: 'No serious intelligence guarantees results without client execution. Signal delivers precise diagnosis and a ready battle plan, but the final outcome depends on your consistency in recording and publishing. What we guarantee is that you\'ll stop guessing what to post and start using what the market has already validated as profitable.' },
+        { q: 'Do I need to know who my competitors are?', a: 'If you already know them, the analysis will be even sharper. If not, our APIs automatically identify the leaders in your niche through active ads and engagement volumes.' },
+        { q: 'What\'s the difference between Pro and Elite plans?', a: 'The <strong>Pro Plan</strong> is focused on those who want an immediate 22-day sprint with 5 included video edits to validate their new positioning.<br><br>The <strong>Elite Plan</strong> is focused on continuous monitoring and recurrence, offering 10 edits per month and the VIP Instant Analysis Channel, where you send any post link and Signal returns the adapted script immediately.' },
+        { q: 'Does this work for my specific niche?', a: 'Yes. Signal doesn\'t deliver generic templates — it analyzes the <strong>real competitors in your market</strong>, not a similar one. If there are leaders and viral content in your niche (and there are, in any niche), our APIs find them and the diagnosis is built on that data. We\'ve served niches like health, finance, fashion, law, food, education, and B2B consulting.' },
+        { q: 'Is this for established businesses or does it work for beginners too?', a: 'Both — but in different ways. Beginners use <strong>Signal Diagnostic</strong> to nail positioning from the start and leave with 20 ready scripts. Those already generating revenue use <strong>Signal Pro or Elite</strong> to scale without expensive agencies or large teams. The common denominator: you need to take Instagram seriously as a client acquisition channel.' },
+        { q: 'Is the report made by Artificial Intelligence?', a: 'We use cutting-edge technology and data-assisted analysis to capture what\'s invisible to the human eye (like ad tags and retention metrics), but every delivery is structured under a business and conversion logic — to ensure content builds authority and drives profit, not just likes.' }
+      ],
+      'cta.tag': 'Last step',
+      'cta.title': 'Stop posting in the<br><span class="highlight">dark.</span>',
+      'cta.sub': 'While you read this, your competitors are interpreting signals you\'re still missing. Signal translates those signals into ready content — today, via <strong>WhatsApp</strong>.',
+      'cta.btn': 'TALK TO SIGNAL NOW',
+      'cta.note': 'Response within 2h on business days · No initial commitment',
+      'footer.tagline': 'Competitive intelligence for those who seek profit, not just likes.',
+      'footer.copy': '© 2025 Firemode Signal. All rights reserved.'
+    }
+  };
+
+  function applyLang(lang) {
+    const t = i18n[lang];
+    if (!t) return;
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    // Nav
+    const navCta = $('nav .btn-primary');
+    if (navCta) navCta.innerHTML = [$('nav .btn-primary svg') ? navCta.querySelector('svg').outerHTML : '', t['nav.cta']].join(' ').trim();
+
+    // Hero
+    const tm = $('.title-main'); if (tm) tm.innerHTML = t['hero.titleMain'];
+    const tr = $('.title-reveal'); if (tr) tr.innerHTML = t['hero.titleReveal'];
+    const ht = $('.hero-tagline'); if (ht) ht.textContent = t['hero.tagline'];
+    const hs = $('.hero-sub'); if (hs) hs.innerHTML = t['hero.sub'];
+    const hcta = $('.hero-cta-group .btn-primary');
+    if (hcta) { const svg = hcta.querySelector('svg'); hcta.innerHTML = (svg ? svg.outerHTML + ' ' : '') + t['hero.cta']; }
+    const hvp = $('.hero-video-placeholder p'); if (hvp) hvp.textContent = t['hero.video'];
+
+    // Problem
+    const ptag = $('#problem .tag'); if (ptag) ptag.textContent = t['problem.tag'];
+    const ptitle = $('#problem .section-title'); if (ptitle) ptitle.innerHTML = t['problem.title'];
+    const psub = $('#problem .section-sub'); if (psub) psub.textContent = t['problem.sub'];
+    $$('.pain-card').forEach((el, i) => {
+      if (!t['pain'][i]) return;
+      const h = el.querySelector('h3'); if (h) h.textContent = t['pain'][i].h3;
+      const p = el.querySelector('p'); if (p) p.innerHTML = t['pain'][i].p;
+    });
+
+    // Solution
+    const stag = $('#solution .tag'); if (stag) stag.textContent = t['solution.tag'];
+    const stitle = $('#solution .section-title'); if (stitle) stitle.innerHTML = t['solution.title'];
+    const ssub = $('#solution .section-sub'); if (ssub) ssub.textContent = t['solution.sub'];
+    $$('.feat-card').forEach((el, i) => {
+      if (!t['feat'][i]) return;
+      const n = el.querySelector('.feat-num'); if (n) n.textContent = t['feat'][i].num;
+      const h = el.querySelector('h3'); if (h) h.textContent = t['feat'][i].h3;
+      const p = el.querySelector('p'); if (p) p.innerHTML = t['feat'][i].p;
+    });
+
+    // Intelligence
+    const itag = $('#intelligence .tag'); if (itag) itag.textContent = t['intel.tag'];
+    const ititle = $('#intelligence .section-title'); if (ititle) ititle.innerHTML = t['intel.title'];
+    const isub = $('#intelligence .section-sub'); if (isub) isub.textContent = t['intel.sub'];
+    $$('.intel-item').forEach((el, i) => {
+      if (!t['intel'][i]) return;
+      const h = el.querySelector('h4'); if (h) h.textContent = t['intel'][i].h4;
+      const p = el.querySelector('p'); if (p) p.innerHTML = t['intel'][i].p;
+    });
+    const ifoot = $('.intel-footer p'); if (ifoot) ifoot.innerHTML = t['intel.footer'];
+
+    // Deliverables
+    const dtag = $('#deliverables .tag'); if (dtag) dtag.textContent = t['deliver.tag'];
+    const dtitle = $('#deliverables .section-title'); if (dtitle) dtitle.innerHTML = t['deliver.title'];
+    $$('.deliver-item').forEach((el, i) => {
+      if (!t['deliver'][i]) return;
+      const h = el.querySelector('h4'); if (h) h.textContent = t['deliver'][i].h4;
+      const p = el.querySelector('p'); if (p) p.innerHTML = t['deliver'][i].p;
+    });
+
+    // Testimonials
+    const testag = $('#testimonials .tag'); if (testag) testag.textContent = t['test.tag'];
+    const testitle = $('#testimonials .section-title'); if (testitle) testitle.innerHTML = t['test.title'];
+    const tessub = $('#testimonials .section-sub'); if (tessub) tessub.textContent = t['test.sub'];
+    $$('.testimonial-card').forEach((el, i) => {
+      if (!t['test'][i]) return;
+      const r = el.querySelector('.testimonial-result'); if (r) r.textContent = t['test'][i].result;
+      const q = el.querySelector('.testimonial-quote'); if (q) q.textContent = t['test'][i].quote;
+      const n = el.querySelector('.author-name'); if (n) n.textContent = t['test'][i].name;
+      const ro = el.querySelector('.author-role'); if (ro) ro.textContent = t['test'][i].role;
+    });
+
+    // Pricing
+    const prtag = $('#pricing .tag'); if (prtag) prtag.textContent = t['pricing.tag'];
+    const prtitle = $('#pricing .section-title'); if (prtitle) prtitle.innerHTML = t['pricing.title'];
+    const prsub = $('#pricing .section-sub'); if (prsub) prsub.textContent = t['pricing.sub'];
+    $$('.plan-card').forEach((el, i) => {
+      if (!t['plan'][i]) return;
+      const pl = t['plan'][i];
+      const nm = el.querySelector('.plan-name'); if (nm) nm.textContent = pl.name;
+      const tg = el.querySelector('.plan-tagline'); if (tg) tg.textContent = pl.tagline;
+      const bg = el.querySelector('.plan-badge'); if (bg) bg.textContent = pl.badge || '';
+      const features = el.querySelectorAll('.plan-features li span:last-child');
+      features.forEach((f, fi) => { if (pl.features[fi] !== undefined) f.innerHTML = pl.features[fi]; });
+      const cta = el.querySelector('.btn'); if (cta) cta.textContent = pl.cta;
+      const prof = el.querySelector('.plan-profile'); if (prof) prof.textContent = pl.profile;
+    });
+
+    // Methodology
+    const mtag = $('#methodology .tag'); if (mtag) mtag.textContent = t['method.tag'];
+    const mtitle = $('#methodology .section-title'); if (mtitle) mtitle.innerHTML = t['method.title'];
+    $$('.step').forEach((el, i) => {
+      if (!t['step'][i]) return;
+      const h = el.querySelector('h3'); if (h) h.textContent = t['step'][i].h3;
+      const p = el.querySelector('p'); if (p) p.innerHTML = t['step'][i].p;
+    });
+    const mnote = $('.content-note-body p'); if (mnote) mnote.innerHTML = t['method.note'];
+    const glabel = $('.g-label'); if (glabel) glabel.textContent = t['guarantee.label'];
+    const gtitle = $('.g-title'); if (gtitle) gtitle.innerHTML = t['guarantee.title'];
+    const gsub = $('.g-sub'); if (gsub) gsub.textContent = t['guarantee.sub'];
+
+    // FAQ
+    const faqtag = $('#faq .tag'); if (faqtag) faqtag.textContent = t['faq.tag'];
+    const faqtitle = $('#faq .section-title'); if (faqtitle) faqtitle.innerHTML = t['faq.title'];
+    const faqsub = $('#faq .section-sub'); if (faqsub) faqsub.textContent = t['faq.sub'];
+    $$('.faq-item').forEach((el, i) => {
+      if (!t['faq'][i]) return;
+      const btn = el.querySelector('.faq-q');
+      if (btn) {
+        const icon = btn.querySelector('.faq-icon');
+        btn.childNodes[0].textContent = t['faq'][i].q + ' ';
+        // preserve icon span
+      }
+      const ans = el.querySelector('.faq-a'); if (ans) ans.innerHTML = t['faq'][i].a;
+    });
+
+    // CTA Final
+    const ctatag = $('#cta-final .tag'); if (ctatag) ctatag.textContent = t['cta.tag'];
+    const ctatitle = $('#cta-final .section-title'); if (ctatitle) ctatitle.innerHTML = t['cta.title'];
+    const ctasub = $('#cta-final .section-sub'); if (ctasub) ctasub.innerHTML = t['cta.sub'];
+    const ctabtn = $('#cta-final .btn-wpp');
+    if (ctabtn) { const svg = ctabtn.querySelector('svg'); ctabtn.innerHTML = (svg ? svg.outerHTML + ' ' : '') + t['cta.btn']; }
+    const ctanote = document.querySelector('#cta-final p:last-of-type'); if (ctanote) ctanote.textContent = t['cta.note'];
+
+    // Footer
+    const ftag = document.querySelector('footer p:first-of-type'); if (ftag) ftag.textContent = t['footer.tagline'];
+    const fcopy = document.querySelector('footer p:last-of-type'); if (fcopy) fcopy.textContent = t['footer.copy'];
+
+    // HTML lang + dir
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    // Save preference
+    localStorage.setItem('fm-lang', lang);
+  }
+
+  // Language switcher
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyLang(lang);
+    });
+  });
+
+  // Restore saved language
+  const savedLang = localStorage.getItem('fm-lang');
+  if (savedLang && savedLang !== 'pt') {
+    const btn = document.querySelector(`.lang-btn[data-lang="${savedLang}"]`);
+    if (btn) { document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    applyLang(savedLang);
+  }
 </script>
 </body>
 </html>
