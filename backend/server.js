@@ -620,14 +620,19 @@ app.post('/api/html-to-pdf', express.text({ type: 'text/html', limit: '20mb' }),
   if (req.headers['x-api-key'] !== process.env.API_SECRET) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+
+  const externalUrl = req.query.url || null;
   const html = req.body;
-  if (!html || html.trim().length === 0) {
-    return res.status(400).json({ error: 'Body vazio. Envie o HTML no corpo da requisição com Content-Type: text/html.' });
+
+  if (!externalUrl && (!html || html.trim().length === 0)) {
+    return res.status(400).json({ error: 'Informe ?url=https://... ou envie HTML no body com Content-Type: text/html.' });
   }
+
   const orientation = req.query.orientation === 'portrait' ? 'portrait' : 'landscape';
   const isLandscape = orientation === 'landscape';
   const W = isLandscape ? 1920 : 1080;
   const H = isLandscape ? 1080 : 1920;
+  const fullPage = req.query.full_page === 'true'; // captura página inteira sem limite de altura
 
   let browser;
   try {
@@ -638,19 +643,35 @@ app.post('/api/html-to-pdf', express.text({ type: 'text/html', limit: '20mb' }),
     });
     const page = await browser.newPage();
     await page.setViewport({ width: W, height: H, deviceScaleFactor: 1 });
-    await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
+
+    // Simula um navegador real para evitar bloqueios de bot
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+    );
+
+    if (externalUrl) {
+      await page.goto(externalUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+    } else {
+      await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
+    }
 
     const pdfBuf = await page.pdf({
       width: `${W}px`,
-      height: `${H}px`,
+      height: fullPage ? undefined : `${H}px`, // undefined = altura automática (página inteira)
       printBackground: true,
       margin: { top: 0, bottom: 0, left: 0, right: 0 },
     });
 
     await browser.close(); browser = null;
 
+    // Nome do arquivo: domínio da URL ou "documento"
+    let fileName = 'documento';
+    if (externalUrl) {
+      try { fileName = new URL(externalUrl).hostname.replace(/\./g, '_'); } catch (_) {}
+    }
+
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="documento.pdf"');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}.pdf"`);
     res.end(Buffer.from(pdfBuf));
   } catch (err) {
     if (browser) await browser.close().catch(() => {});
