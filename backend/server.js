@@ -450,6 +450,11 @@ function parseSlideBody(body) {
     return { data, auditData };
   }
 
+  // Format 4: objeto plano com plano_diretor + cliente/concorrentes na raiz (saída do Consolidar Saída Final)
+  if (!Array.isArray(body) && body.plano_diretor && (body.cliente || body.concorrentes)) {
+    return { data: body.plano_diretor, auditData: body };
+  }
+
   return { data: body, auditData: null };
 }
 
