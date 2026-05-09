@@ -681,6 +681,120 @@ app.post('/api/html-to-pdf', express.text({ type: 'text/html', limit: '20mb' }),
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
+// 8d. ANALISAR LANDING PAGE
+//
+//  POST /api/lp/analyze
+//  x-api-key: <API_SECRET>
+//  Body JSON: { url: "https://...", screenshot: true }
+//
+//  Retorna JSON com título, meta, texto limpo, links, vídeos,
+//  tempo de carregamento e screenshot em base64 (opcional).
+// ═════════════════════════════════════════════════════════════════════════════
+
+app.post('/api/lp/analyze', async (req, res) => {
+  if (req.headers['x-api-key'] !== process.env.API_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { url, screenshot = false } = req.body || {};
+  if (!url || url === 'about:blank') {
+    return res.json({ ok: true, _skip: true, url, url_final: url });
+  }
+
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      executablePath: CHROME_PATH,
+      headless: 'shell',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+    );
+
+    // Bloqueia recursos pesados desnecessários (fontes, imagens grandes)
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const type = req.resourceType();
+      if (['font', 'media'].includes(type)) req.abort();
+      else req.continue();
+    });
+
+    const t0 = Date.now();
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 45000 });
+    const load_time_ms = Date.now() - t0;
+    const url_final = page.url();
+
+    // Extrai dados via evaluate no browser
+    const pageData = await page.evaluate(() => {
+      // Título e meta
+      const title = document.title || '';
+      const metaDesc = document.querySelector('meta[name="description"]')?.content || '';
+      const metaOgTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+      const metaOgDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+      const metaOgImage = document.querySelector('meta[property="og:image"]')?.content || '';
+
+      // Texto limpo (sem scripts/styles)
+      const clone = document.body?.cloneNode(true);
+      clone?.querySelectorAll('script, style, noscript, svg').forEach(el => el.remove());
+      const text = (clone?.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 5000);
+
+      // Links externos
+      const links = [];
+      document.querySelectorAll('a[href]').forEach(a => {
+        const href = a.href;
+        if (href && /^https?:\/\//.test(href) && href !== window.location.href) {
+          links.push({ href, text: (a.innerText || a.textContent || '').trim().slice(0, 100) });
+        }
+      });
+      // Deduplicar links por href
+      const linksUniq = [...new Map(links.map(l => [l.href, l])).values()].slice(0, 50);
+
+      // Vídeos
+      const videos = [];
+      document.querySelectorAll('video source, video[src]').forEach(el => {
+        const src = el.src || el.getAttribute('src');
+        if (src) videos.push({ type: 'html5', src });
+      });
+      document.querySelectorAll('iframe[src]').forEach(el => {
+        const src = el.src;
+        if (/youtube\.com|youtu\.be/.test(src)) videos.push({ type: 'youtube', src });
+        else if (/vimeo\.com/.test(src))         videos.push({ type: 'vimeo', src });
+        else if (/wistia\.com/.test(src))        videos.push({ type: 'wistia', src });
+      });
+
+      return { title, meta: { description: metaDesc, og_title: metaOgTitle, og_description: metaOgDesc, og_image: metaOgImage }, text, links: linksUniq, videos };
+    });
+
+    // Screenshot opcional (PNG base64)
+    let screenshot_base64 = null;
+    if (screenshot) {
+      const scBuf = await page.screenshot({ type: 'png', fullPage: false });
+      screenshot_base64 = Buffer.from(scBuf).toString('base64');
+    }
+
+    await browser.close(); browser = null;
+
+    return res.json({
+      ok: true,
+      url,
+      url_final,
+      load_time_ms,
+      ...pageData,
+      screenshot_base64,
+    });
+
+  } catch (err) {
+    if (browser) await browser.close().catch(() => {});
+    console.error('[lp/analyze]', err.message);
+    return res.json({ ok: false, url, error: err.message });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
 // 7. WEBHOOK — CONFIRMAÇÃO DE PAGAMENTO (Stripe/Kiwify)
 // ═════════════════════════════════════════════════════════════════════════════
 
