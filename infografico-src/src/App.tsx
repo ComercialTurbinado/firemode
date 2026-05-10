@@ -1135,7 +1135,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
           <div style={{ marginTop: f(20), display: 'flex', flexDirection: isP ? 'row' : 'column', gap: isP ? f(24) : 0 }}>
             <div style={{ flex: isP ? 1 : undefined }}>
               <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(12), color: C.green, textTransform: 'uppercase', letterSpacing: 1, marginBottom: f(8) }}>✅ Como Falar</div>
-              {dt.tom_de_voz.como_falar.map((t, i) => (
+              {dt.tom_de_voz.como_falar?.map((t, i) => (
                 <div key={i} style={{ display: 'flex', gap: f(8), marginBottom: f(6), alignItems: 'flex-start' }}>
                   <div style={{ color: C.green, fontSize: f(12), marginTop: 2 }}>▸</div>
                   <span style={{ fontFamily: 'Roboto', fontSize: f(12), color: 'rgba(255,255,255,0.8)', lineHeight: lh }}>{t}</span>
@@ -1144,7 +1144,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
             </div>
             <div style={{ flex: isP ? 1 : undefined, marginTop: isP ? 0 : f(16) }}>
               <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(12), color: C.primary, textTransform: 'uppercase', letterSpacing: 1, marginBottom: f(8) }}>❌ Como NÃO Falar</div>
-              {dt.tom_de_voz.como_nao_falar.map((t, i) => (
+              {dt.tom_de_voz.como_nao_falar?.map((t, i) => (
                 <div key={i} style={{ display: 'flex', gap: f(8), marginBottom: f(6), alignItems: 'flex-start' }}>
                   <div style={{ color: C.primary, fontSize: f(12), marginTop: 2 }}>▸</div>
                   <span style={{ fontFamily: 'Roboto', fontSize: f(12), color: 'rgba(255,255,255,0.5)', lineHeight: lh }}>{t}</span>
@@ -1156,7 +1156,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: isP ? '20px 40px 32px' : 48, gap: f(20) }}>
           <div>
             <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(14), color: C.green, textTransform: 'uppercase', marginBottom: f(10) }}>Frases que funcionam</div>
-            {dt.tom_de_voz.exemplos_frase_ok.map((ex, i) => (
+            {dt.tom_de_voz.exemplos_frase_ok?.map((ex, i) => (
               <div key={i} style={{ marginBottom: f(10), padding: f(14), borderRadius: 12, background: 'rgba(0,179,126,0.08)', border: '1px solid rgba(0,179,126,0.22)' }}>
                 <span style={{ fontFamily: 'Roboto', fontSize: f(14), color: C.white }}>"{ex}"</span>
               </div>
@@ -1164,7 +1164,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
           </div>
           <div>
             <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(14), color: C.primary, textTransform: 'uppercase', marginBottom: f(10) }}>Frases a evitar</div>
-            {dt.tom_de_voz.exemplos_frase_evitar.map((ex, i) => (
+            {dt.tom_de_voz.exemplos_frase_evitar?.map((ex, i) => (
               <div key={i} style={{ marginBottom: f(10), padding: f(14), borderRadius: 12, background: 'rgba(255,102,0,0.06)', border: '1px solid rgba(255,102,0,0.18)' }}>
                 <span style={{ fontFamily: 'Roboto', fontSize: f(14), color: 'rgba(255,255,255,0.4)', textDecoration: 'line-through' }}>"{ex}"</span>
               </div>
@@ -1204,7 +1204,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.yellow, textTransform: 'uppercase', marginBottom: f(10) }}>⏰ Melhores Horários</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: f(8) }}>
-                  {dt.frequencia_publicacao.melhores_horarios.map((h, i) => (
+                  {dt.frequencia_publicacao.melhores_horarios?.map((h, i) => (
                     <div key={i} style={{ padding: f(10), borderRadius: 10, background: 'rgba(255,214,0,0.07)', border: '1px solid rgba(255,214,0,0.18)' }}>
                       <span style={{ fontFamily: 'Roboto', fontSize: f(12), color: 'rgba(255,255,255,0.8)' }}>{h}</span>
                     </div>
@@ -1215,7 +1215,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
                     <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.white, textTransform: 'uppercase', marginBottom: f(8) }}>🔥 Dias de Pico</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
                       {['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'].map((d) => {
-                        const isPico = dt.frequencia_publicacao.dias_de_pico.includes(d);
+                        const isPico = dt.frequencia_publicacao.dias_de_pico?.includes(d);
                         return (
                           <div key={d} style={{ borderRadius: 8, padding: `${f(5)}px ${f(10)}px`, background: isPico ? C.primary : 'rgba(255,255,255,0.04)', border: isPico ? 'none' : '1px solid rgba(255,255,255,0.08)' }}>
                             <span style={{ fontFamily: 'Roboto', fontSize: f(12), color: C.white }}>{d}{isPico ? ' 🔥' : ''}</span>
@@ -1238,9 +1238,9 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 56 }}>
           <div style={{ marginBottom: f(24), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>Pilares de Conteúdo</div>
           <div style={{ display: 'flex', flexDirection: isP ? 'column' : 'row', gap: f(40), flex: 1, alignItems: 'flex-start' }}>
-            <DonutChart f={f} data={dt.pilares_conteudo.map((p2, i) => ({ label: p2.pilar, value: p2.porcentagem, color: pillarColors[i] }))} />
+            <DonutChart f={f} data={dt.pilares_conteudo?.map((p2, i) => ({ label: p2.pilar, value: p2.porcentagem, color: pillarColors[i] }))} />
             <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: f(14), width: isP ? '100%' : undefined }}>
-              {dt.pilares_conteudo.map((p2, i) => (
+              {dt.pilares_conteudo?.map((p2, i) => (
                 <div key={i} style={{ borderRadius: 16, padding: f(20), background: `${pillarColors[i]}0e`, border: `1px solid ${pillarColors[i]}44` }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: f(10) }}>
                     <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(16), color: pillarColors[i] }}>{p2.pilar}</div>
@@ -1264,7 +1264,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: isP ? '40px 48px 24px' : 64, borderRight: isP ? 'none' : '1px solid rgba(255,255,255,0.06)', borderBottom: isP ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
           <div style={{ marginBottom: f(20), fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(22), color: C.white, textTransform: 'uppercase' }}>🪝 Ganchos Modelo</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: f(14), flex: 1 }}>
-            {dt.ganchos_modelo.map((g, i) => (
+            {dt.ganchos_modelo?.map((g, i) => (
               <div key={i} style={{ borderRadius: 14, padding: f(18), position: 'relative', overflow: 'hidden', background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.25)' }}>
                 <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: C.primary }} />
                 <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(15), color: C.white, marginBottom: f(8), lineHeight: lh }}>"{g.gancho}"</div>
@@ -1276,7 +1276,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: isP ? '24px 48px 40px' : 64 }}>
           <div style={{ marginBottom: f(16), fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(22), color: C.white, textTransform: 'uppercase' }}>💬 CTAs Recomendados</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: f(12), flex: 1 }}>
-            {dt.ctas_recomendados.map((c, i) => {
+            {dt.ctas_recomendados?.map((c, i) => {
               const icons = ['💬', '📩', '🔗', '📣', '✉️'];
               const cols  = [C.green, C.primary, C.yellow, C.green, C.primary];
               const col   = cols[i % cols.length];
@@ -1303,7 +1303,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ flex: isP ? '0 0 auto' : 1, display: 'flex', flexDirection: 'column', padding: isP ? '40px 48px 24px' : 64, borderRight: isP ? 'none' : '1px solid rgba(255,255,255,0.06)', borderBottom: isP ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
           <div style={{ marginBottom: f(20), fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(22), color: C.white, textTransform: 'uppercase' }}>💬 Ideias de Títulos</div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: f(12) }}>
-            {dt.ideias_de_titulos.map((t, i) => {
+            {dt.ideias_de_titulos?.map((t, i) => {
               const pCols: Record<string, string> = { 'Transformação': C.primary, 'Storytelling Pessoal': C.green, 'Dicas Práticas': C.yellow, 'Oferta e CTA': 'rgba(200,200,255,0.8)', 'Storytelling Real': C.green, 'Educação & Dica Prática': C.yellow, 'Alerta & Oportunidade': C.primary, 'Bastidor & Prova Social': C.green };
               const col = pCols[t.pilar] || C.white;
               return (
@@ -1322,7 +1322,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ flex: isP ? '0 0 auto' : '0 0 460px', display: 'flex', flexDirection: 'column', padding: isP ? '24px 48px 40px' : 56 }}>
           <div style={{ marginBottom: f(16), fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(22), color: C.white, textTransform: 'uppercase' }}>📱 Stories Recorrentes</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: f(8), flex: 1 }}>
-            {dt.stories_recorrentes.map((s, i) => {
+            {dt.stories_recorrentes?.map((s, i) => {
               const storyIcons = ['📊', '📹', '📬', '✅', '💡', '🎯'];
               return (
                 <div key={i} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: f(10), borderRadius: 10, padding: `${f(9)}px ${f(12)}px`, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -1348,13 +1348,13 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
             <div style={{ borderRadius: 16, padding: f(20), background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.25)' }}>
               <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.primary, textTransform: 'uppercase', marginBottom: f(10) }}>📌 Palavras-chave Principais</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-                {dt.seo_instagram.palavras_chave_principais.map((k) => <Tag key={k} text={k} color={C.primary} f={f} />)}
+                {dt.seo_instagram.palavras_chave_principais?.map((k) => <Tag key={k} text={k} color={C.primary} f={f} />)}
               </div>
             </div>
             <div style={{ borderRadius: 16, padding: f(20), background: 'rgba(0,179,126,0.08)', border: '1px solid rgba(0,179,126,0.25)' }}>
               <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.green, textTransform: 'uppercase', marginBottom: f(10) }}>🔄 Palavras-chave Secundárias</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-                {dt.seo_instagram.palavras_chave_secundarias.map((k) => <Tag key={k} text={k} color={C.green} f={f} />)}
+                {dt.seo_instagram.palavras_chave_secundarias?.map((k) => <Tag key={k} text={k} color={C.green} f={f} />)}
               </div>
             </div>
           </div>
@@ -1394,7 +1394,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
               <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.primary, textTransform: 'uppercase' }}>Core (sempre usar)</span>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-              {dt.hashtags_estrategicas.core.map((h) => <Tag key={h} text={h} color={C.primary} f={f} />)}
+              {dt.hashtags_estrategicas.core?.map((h) => <Tag key={h} text={h} color={C.primary} f={f} />)}
             </div>
           </div>
           <div style={{ borderRadius: 20, padding: f(22), background: 'rgba(0,179,126,0.08)', border: '1px solid rgba(0,179,126,0.28)' }}>
@@ -1403,7 +1403,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
               <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.green, textTransform: 'uppercase' }}>Rotativas — Nicho</span>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-              {dt.hashtags_estrategicas.rotativas_nicho.map((h) => <Tag key={h} text={h} color={C.green} f={f} />)}
+              {dt.hashtags_estrategicas.rotativas_nicho?.map((h) => <Tag key={h} text={h} color={C.green} f={f} />)}
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: f(14), gridColumn: isP ? '1 / -1' : undefined }}>
@@ -1413,7 +1413,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
                 <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: C.yellow, textTransform: 'uppercase' }}>Alto Volume</span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-                {dt.hashtags_estrategicas.rotativas_alto_volume.map((h) => <Tag key={h} text={h} color={C.yellow} f={f} />)}
+                {dt.hashtags_estrategicas.rotativas_alto_volume?.map((h) => <Tag key={h} text={h} color={C.yellow} f={f} />)}
               </div>
             </div>
             <div style={{ borderRadius: 20, padding: f(18), background: 'rgba(255,60,60,0.07)', border: '1px solid rgba(255,60,60,0.22)' }}>
@@ -1422,7 +1422,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
                 <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(13), color: '#ff5555', textTransform: 'uppercase' }}>Evite</span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-                {dt.hashtags_estrategicas.evite.map((h) => (
+                {dt.hashtags_estrategicas.evite?.map((h) => (
                   <span key={h} style={{ padding: `${f(3)}px ${f(8)}px`, borderRadius: 4, fontSize: f(11), background: 'rgba(255,60,60,0.1)', color: '#ff5555', border: '1px solid rgba(255,60,60,0.2)', textDecoration: 'line-through', fontFamily: 'Roboto' }}>{h}</span>
                 ))}
               </div>
@@ -1443,7 +1443,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         <div style={{ marginBottom: f(24), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>Identidade Visual</div>
         <div style={{ display: 'flex', flexDirection: isP ? 'column' : 'row', gap: f(32), flex: 1 }}>
           <div style={{ display: 'flex', flexDirection: isP ? 'row' : 'column', gap: f(10), width: isP ? '100%' : 260, flexShrink: 0 }}>
-            {dt.identidade_visual.paleta_cores.map((cor) => (
+            {dt.identidade_visual.paleta_cores?.map((cor) => (
               <div key={cor.nome} style={{ display: 'flex', flex: isP ? 1 : undefined, alignItems: 'center', gap: f(12), borderRadius: 12, padding: f(10), background: 'rgba(255,255,255,0.03)' }}>
                 <div style={{ width: isP ? f(32) : f(48), height: isP ? f(32) : f(48), borderRadius: 8, background: cor.hex, flexShrink: 0 }} />
                 <div style={{ minWidth: 0 }}>
@@ -1466,7 +1466,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
             </div>
             {dt.identidade_visual.tipografia.regras_uso && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-                {dt.identidade_visual.tipografia.regras_uso.map((r: string, i: number) => (
+                {dt.identidade_visual.tipografia.regras_uso?.map((r: string, i: number) => (
                   <span key={i} style={{ padding: `${f(3)}px ${f(8)}px`, borderRadius: 4, fontSize: f(10), fontFamily: 'Roboto', color: 'rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>▸ {r}</span>
                 ))}
               </div>
@@ -1485,10 +1485,10 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
               <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(12), color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: f(6) }}>👔 Vestimenta / Aparições</div>
               <p style={{ fontFamily: 'Roboto', fontSize: f(11), color: 'rgba(255,255,255,0.75)', lineHeight: lh, margin: `0 0 ${f(8)}px` }}>{dt.identidade_visual.vestimenta_aparicoes.diretrizes}</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(5), marginBottom: f(6) }}>
-                {dt.identidade_visual.vestimenta_aparicoes.mood_referencias.map((m) => <Tag key={m} text={m} color={C.green} f={f} />)}
+                {dt.identidade_visual.vestimenta_aparicoes.mood_referencias?.map((m) => <Tag key={m} text={m} color={C.green} f={f} />)}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(5) }}>
-                {dt.identidade_visual.vestimenta_aparicoes.evitar.map((e) => (
+                {dt.identidade_visual.vestimenta_aparicoes.evitar?.map((e) => (
                   <span key={e} style={{ padding: `${f(3)}px ${f(8)}px`, borderRadius: 4, fontSize: f(10), background: 'rgba(255,60,60,0.08)', color: '#ff5555', border: '1px solid rgba(255,60,60,0.18)', textDecoration: 'line-through', fontFamily: 'Roboto' }}>{e}</span>
                 ))}
               </div>
@@ -1514,7 +1514,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
           ))}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: isP ? '1fr' : '1fr 1fr', gap: f(12), flex: 1 }}>
-          {dt.kpis_acompanhar.map((k, i) => <KpiCard key={i} kpi={k.kpi} meta30={k.meta_30d} meta60={k.meta_60d} meta90={k.meta_90d} f={f} />)}
+          {dt.kpis_acompanhar?.map((k, i) => <KpiCard key={i} kpi={k.kpi} meta30={k.meta_30d} meta60={k.meta_60d} meta90={k.meta_90d} f={f} />)}
         </div>
       </div>
     )});
@@ -1549,7 +1549,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
           <div style={{ marginTop: f(16) }}>
             <div style={{ fontFamily: 'Roboto', fontSize: f(11), color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: f(8) }}>Mood Visual</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-              {dt.identidade_visual.vestimenta_aparicoes.mood_referencias.map((m) => <Tag key={m} text={m} color={C.green} f={f} />)}
+              {dt.identidade_visual.vestimenta_aparicoes.mood_referencias?.map((m) => <Tag key={m} text={m} color={C.green} f={f} />)}
             </div>
           </div>
         </div>
@@ -1605,7 +1605,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
       <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 56 }}>
         <div style={{ marginBottom: f(24), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>🔥 Assuntos Quentes</div>
         <div style={{ display: 'grid', gridTemplateColumns: isP ? '1fr 1fr' : '1fr 1fr 1fr', gap: f(10), flex: 1 }}>
-          {dt.assuntos_quentes.map((a, i) => {
+          {dt.assuntos_quentes?.map((a, i) => {
             const cols = [C.primary, C.green, C.yellow];
             const col  = cols[i % 3];
             return (
