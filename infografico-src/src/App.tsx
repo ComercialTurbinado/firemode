@@ -45,6 +45,13 @@ declare global {
 function withDefaults(raw: any): typeof demoData {
   const ov = raw?.overview_cliente ?? {};
   const dt = raw?.diretrizes_tecnicas ?? {};
+  const tv = dt.tom_de_voz ?? {};
+  const seo = dt.seo_instagram ?? {};
+  const freq = dt.frequencia_publicacao ?? {};
+  const hash = dt.hashtags_estrategicas ?? {};
+  const iv = dt.identidade_visual ?? {};
+  const vest = iv.vestimenta_aparicoes ?? {};
+  const tipo = iv.tipografia ?? {};
   return {
     overview_cliente: {
       diagnostico_identidade:      ov.diagnostico_identidade      ?? '',
@@ -57,21 +64,59 @@ function withDefaults(raw: any): typeof demoData {
       carta_para_cliente_markdown: ov.carta_para_cliente_markdown  ?? '',
     },
     diretrizes_tecnicas: {
-      tom_de_voz:             dt.tom_de_voz            ?? { personalidade: '', como_falar: [], como_nao_falar: [], exemplos_frase_ok: [], exemplos_frase_evitar: [] },
-      seo_instagram:          dt.seo_instagram          ?? { palavras_chave_principais: [], bio_otimizada: '', hashtags_fixas: [] },
-      frequencia_publicacao:  dt.frequencia_publicacao  ?? { posts_por_semana: 0, posts_por_dia: 0, melhor_horario: '', distribuicao_formatos: {} },
-      pilares_conteudo:       dt.pilares_conteudo        ?? [],
-      assuntos_quentes:       dt.assuntos_quentes        ?? [],
-      ideias_de_titulos:      dt.ideias_de_titulos       ?? [],
-      ganchos_modelo:         dt.ganchos_modelo          ?? [],
-      ctas_recomendados:      dt.ctas_recomendados       ?? [],
-      hashtags_estrategicas:  dt.hashtags_estrategicas   ?? { volume_alto: [], volume_medio: [], volume_baixo: [], branded: [] },
-      identidade_visual:      dt.identidade_visual       ?? { paleta_cores: { primaria: '', secundaria: '', apoio1: '', apoio2: '', neutro: '' }, tipografia: { titulo: '', corpo: '' }, elementos_visuais: [] },
-      calendario_30_dias:     dt.calendario_30_dias      ?? [],
-      stories_recorrentes:    dt.stories_recorrentes     ?? [],
-      kpis_acompanhar:        dt.kpis_acompanhar         ?? [],
-      briefing_redatores:     dt.briefing_redatores      ?? '',
-      briefing_designers:     dt.briefing_designers      ?? '',
+      tom_de_voz: {
+        personalidade:        tv.personalidade        ?? '',
+        como_falar:           tv.como_falar           ?? [],
+        como_nao_falar:       tv.como_nao_falar       ?? [],
+        exemplos_frase_ok:    tv.exemplos_frase_ok    ?? [],
+        exemplos_frase_evitar:tv.exemplos_frase_evitar?? [],
+      },
+      seo_instagram: {
+        palavras_chave_principais:  seo.palavras_chave_principais  ?? [],
+        palavras_chave_secundarias: seo.palavras_chave_secundarias ?? [],
+        bio_otimizada:              seo.bio_otimizada              ?? seo.uso_em_bio ?? '',
+        hashtags_fixas:             seo.hashtags_fixas             ?? [],
+      },
+      frequencia_publicacao: {
+        posts_por_semana:      freq.posts_por_semana      ?? 0,
+        posts_por_dia:         freq.posts_por_dia         ?? 0,
+        melhor_horario:        freq.melhor_horario        ?? '',
+        melhores_horarios:     Array.isArray(freq.melhores_horarios) ? freq.melhores_horarios : (freq.melhor_horario ? [freq.melhor_horario] : []),
+        dias_de_pico:          freq.dias_de_pico ?? [],
+        distribuicao_formatos: freq.distribuicao_formatos ?? {},
+      },
+      pilares_conteudo:      dt.pilares_conteudo   ?? [],
+      assuntos_quentes:      dt.assuntos_quentes   ?? [],
+      ideias_de_titulos:     dt.ideias_de_titulos  ?? [],
+      ganchos_modelo:        dt.ganchos_modelo     ?? [],
+      ctas_recomendados:     dt.ctas_recomendados  ?? [],
+      hashtags_estrategicas: {
+        core:                  hash.core                  ?? [],
+        rotativas_alto_volume: hash.rotativas_alto_volume ?? [],
+        rotativas_nicho:       hash.rotativas_nicho       ?? [],
+        evite:                 hash.evite                 ?? [],
+      },
+      identidade_visual: {
+        paleta_cores: Array.isArray(iv.paleta_cores) ? iv.paleta_cores : [],
+        tipografia: {
+          display:    tipo.display    ?? tipo.titulo ?? '',
+          texto:      tipo.texto      ?? tipo.corpo  ?? '',
+          regras_uso: tipo.regras_uso ?? [],
+        },
+        estilo_fotografico:  iv.estilo_fotografico  ?? '',
+        estilo_grafico:      iv.estilo_grafico      ?? '',
+        vestimenta_aparicoes: {
+          diretrizes:       vest.diretrizes       ?? '',
+          evitar:           vest.evitar           ?? [],
+          mood_referencias: vest.mood_referencias ?? [],
+        },
+        logos_e_marca_dagua: iv.logos_e_marca_dagua ?? '',
+      },
+      calendario_30_dias:  dt.calendario_30_dias  ?? [],
+      stories_recorrentes: dt.stories_recorrentes ?? [],
+      kpis_acompanhar:     dt.kpis_acompanhar     ?? [],
+      briefing_redatores:  dt.briefing_redatores  ?? '',
+      briefing_designers:  dt.briefing_designers  ?? '',
     },
   } as typeof demoData;
 }
