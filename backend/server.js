@@ -635,9 +635,18 @@ app.post('/api/html-to-pdf', express.text({ type: 'text/html', limit: '20mb' }),
 
   const orientation = req.query.orientation === 'portrait' ? 'portrait' : 'landscape';
   const isLandscape = orientation === 'landscape';
-  const W = isLandscape ? 1920 : 1080;
-  const H = isLandscape ? 1080 : 1920;
-  const fullPage = req.query.full_page === 'true'; // captura página inteira sem limite de altura
+  const useA4       = req.query.format === 'A4'; // ?format=A4 → usa papel A4 real (respeita mm e @page)
+  const fullPage    = req.query.full_page === 'true'; // captura página inteira sem limite de altura
+
+  // Dimensões do viewport:
+  //   A4 portrait  → 794×1123 px (96 dpi)  |  A4 landscape → 1123×794 px
+  //   Padrão        → 1080×1920 (portrait)  |  1920×1080 (landscape)
+  const W = useA4
+    ? (isLandscape ? 1123 : 794)
+    : (isLandscape ? 1920 : 1080);
+  const H = useA4
+    ? (isLandscape ? 794  : 1123)
+    : (isLandscape ? 1080 : 1920);
 
   let browser;
   try {
@@ -660,12 +669,24 @@ app.post('/api/html-to-pdf', express.text({ type: 'text/html', limit: '20mb' }),
       await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
     }
 
-    const pdfBuf = await page.pdf({
-      width: `${W}px`,
-      height: fullPage ? undefined : `${H}px`, // undefined = altura automática (página inteira)
-      printBackground: true,
-      margin: { top: 0, bottom: 0, left: 0, right: 0 },
-    });
+    // Opções do PDF:
+    //   ?format=A4  → formato de papel A4, margens controladas pelo CSS @page
+    //   padrão      → dimensões em px (comportamento original)
+    const pdfOptions = useA4
+      ? {
+          format: isLandscape ? 'A4' : 'A4',
+          landscape: isLandscape,
+          printBackground: true,
+          margin: { top: 0, bottom: 0, left: 0, right: 0 },
+        }
+      : {
+          width: `${W}px`,
+          height: fullPage ? undefined : `${H}px`,
+          printBackground: true,
+          margin: { top: 0, bottom: 0, left: 0, right: 0 },
+        };
+
+    const pdfBuf = await page.pdf(pdfOptions);
 
     await browser.close(); browser = null;
 
