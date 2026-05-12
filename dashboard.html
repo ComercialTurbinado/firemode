@@ -659,6 +659,7 @@ function dashboard() {
     error: null,
     data: null,
     dt: null,
+    planoId: null,
     originalDt: null,
     saved: true,
     saving: false,
@@ -697,6 +698,7 @@ function dashboard() {
         if (!r.ok) throw new Error(`Erro ${r.status}: ${await r.text()}`);
         const json = await r.json();
         this.data = json;
+        this.planoId = json.plano_id || null;
         this.dt = json.diretrizes_tecnicas;
         this.originalDt = JSON.stringify(this.dt);
       } catch(e) {
@@ -770,7 +772,7 @@ function dashboard() {
         const r = await fetch(`/api/dashboard/${handle}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ diretrizes_tecnicas: this.dt }),
+          body: JSON.stringify({ diretrizes_tecnicas: this.dt, plano_id: this.planoId }),
         });
         if (!r.ok) throw new Error(await r.text());
         this.originalDt = JSON.stringify(this.dt);

@@ -22,6 +22,15 @@ const fs          = require('fs');
 const path        = require('path');
 const crypto      = require('crypto');
 const { exec }    = require('child_process');
+// ─── Supabase REST (sem SDK — usa axios direto) ───────────────────────────────
+const SUPA_URL  = process.env.SUPABASE_URL  || 'https://mblntoimrkfoocbztozb.supabase.co';
+const SUPA_KEY  = process.env.SUPABASE_ANON_KEY || '';
+const supaHeaders = () => ({
+  'apikey': SUPA_KEY,
+  'Authorization': `Bearer ${SUPA_KEY}`,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation',
+});
 
 const CHROME_PATH = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
@@ -345,80 +354,101 @@ Tom: profissional, direto, orientado a resultado. Use dados específicos.
 app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 
 // ─── Dashboard estático ───────────────────────────────────────────────────────
-app.use('/dashboard', express.static(path.join(__dirname, '..', 'dashboard.html')));
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'dashboard.html'));
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// DASHBOARD — Área do usuário (leitura e edição de diretrizes)
-// GET  /api/dashboard/:handle  → retorna diretrizes_tecnicas do usuário
-// PUT  /api/dashboard/:handle  → salva alterações feitas pelo usuário
-// POST /api/dashboard/:handle  → (interno/n8n) salva análise completa do usuário
+// DASHBOARD — Área do usuário (leitura e edição de diretrizes via Supabase)
+// GET /api/dashboard/:handle  → busca plano_diretor mais recente do cliente
+// PUT /api/dashboard/:handle  → salva edições do usuário no plano_diretor
 // ═════════════════════════════════════════════════════════════════════════════
 
-const USERS_DIR = path.join(__dirname, '..', 'data', 'users');
-if (!fs.existsSync(USERS_DIR)) fs.mkdirSync(USERS_DIR, { recursive: true });
-
-function userFilePath(handle) {
-  const safe = handle.replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
-  return path.join(USERS_DIR, `${safe}.json`);
+// Helper: monta objeto diretrizes_tecnicas a partir de uma row do planos_diretores
+function rowToDiretrizes(row) {
+  return {
+    tom_de_voz:             row.tom_de_voz            || {},
+    seo_instagram:          row.seo_instagram          || {},
+    frequencia_publicacao:  row.frequencia_publicacao  || {},
+    pilares_conteudo:       row.pilares_conteudo       || [],
+    assuntos_quentes:       row.assuntos_quentes       || [],
+    ideias_de_titulos:      row.ideias_titulos         || [],
+    ganchos_modelo:         row.ganchos_modelo         || [],
+    ctas_recomendados:      row.ctas_recomendados      || [],
+    hashtags_estrategicas:  row.hashtags_estrategicas  || {},
+    identidade_visual:      row.identidade_visual      || {},
+    stories_recorrentes:    row.stories_recorrentes    || [],
+    kpis_acompanhar:        row.kpis_acompanhar        || [],
+    briefing_redatores:     row.briefing_redatores     || '',
+    briefing_designers:     row.briefing_designers     || '',
+    calendario_30_dias:     row.calendario_30_dias     || [],
+  };
 }
 
-// GET /api/dashboard/:handle — sem autenticação (link é privado por handle)
-app.get('/api/dashboard/:handle', (req, res) => {
-  const fp = userFilePath(req.params.handle);
-  if (!fs.existsSync(fp)) {
-    return res.status(404).json({ error: 'Análise não encontrada para este handle.' });
-  }
+// GET /api/dashboard/:handle — sem autenticação (URL é privada por handle)
+app.get('/api/dashboard/:handle', async (req, res) => {
+  const handle = req.params.handle.replace(/^@/, '').toLowerCase().trim();
   try {
-    const data = JSON.parse(fs.readFileSync(fp, 'utf8'));
-    // Retorna apenas o que o dashboard precisa (sem payload GPT)
-    const { gpt_payload_dossie, gpt_payload_diretor, ...safe } = data;
-    res.json(safe.diretrizes_tecnicas
-      ? { handle_cliente: safe.handle_cliente, nicho: safe.nicho, nome_cliente: safe.nome_cliente, diretrizes_tecnicas: safe.diretrizes_tecnicas }
-      : safe);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// PUT /api/dashboard/:handle — salva edições do usuário (sem auth pois URL é privada)
-app.put('/api/dashboard/:handle', (req, res) => {
-  const fp = userFilePath(req.params.handle);
-  if (!fs.existsSync(fp)) {
-    return res.status(404).json({ error: 'Análise não encontrada.' });
-  }
-  try {
-    const existing = JSON.parse(fs.readFileSync(fp, 'utf8'));
-    const { diretrizes_tecnicas } = req.body;
-    if (!diretrizes_tecnicas) return res.status(400).json({ error: 'Campo diretrizes_tecnicas ausente.' });
-    existing.diretrizes_tecnicas = diretrizes_tecnicas;
-    existing._ultima_edicao_usuario = new Date().toISOString();
-    fs.writeFileSync(fp, JSON.stringify(existing, null, 2));
-    res.json({ ok: true, salvo_em: existing._ultima_edicao_usuario });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// POST /api/dashboard/:handle — chamado pelo n8n para salvar análise inicial
-app.post('/api/dashboard/:handle', (req, res) => {
-  const authKey = req.headers['x-api-key'];
-  if (authKey !== process.env.API_SECRET) return res.status(401).json({ error: 'Unauthorized' });
-  try {
-    const data = req.body;
-    if (!data || !data.plano_diretor) return res.status(400).json({ error: 'JSON de análise inválido.' });
-    // Flatten diretrizes_tecnicas para acesso direto
-    if (data.plano_diretor?.diretrizes_tecnicas && !data.diretrizes_tecnicas) {
-      data.diretrizes_tecnicas = data.plano_diretor.diretrizes_tecnicas;
+    const resp = await axios.get(
+      `${SUPA_URL}/rest/v1/planos_diretores?cliente_handle=eq.${handle}&order=criado_em.desc&limit=1&select=*,analises(nicho)`,
+      { headers: supaHeaders() }
+    );
+    const rows = resp.data;
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: 'Nenhum plano encontrado para este handle.' });
     }
-    const fp = userFilePath(req.params.handle);
-    fs.writeFileSync(fp, JSON.stringify(data, null, 2));
-    const dashUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/dashboard?handle=${req.params.handle}`;
-    res.json({ ok: true, dashboard_url: dashUrl });
+    const row = rows[0];
+    res.json({
+      plano_id:            row.id,
+      handle_cliente:      handle,
+      nicho:               row.analises?.nicho || '',
+      diretrizes_tecnicas: rowToDiretrizes(row),
+    });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: e.response?.data || e.message });
+  }
+});
+
+// PUT /api/dashboard/:handle — salva edições do usuário
+app.put('/api/dashboard/:handle', async (req, res) => {
+  const handle = req.params.handle.replace(/^@/, '').toLowerCase().trim();
+  const { diretrizes_tecnicas: dt, plano_id } = req.body;
+  if (!dt) return res.status(400).json({ error: 'Campo diretrizes_tecnicas ausente.' });
+
+  // Monta payload apenas com campos presentes
+  const payload = {};
+  const map = {
+    tom_de_voz:            dt.tom_de_voz,
+    seo_instagram:         dt.seo_instagram,
+    frequencia_publicacao: dt.frequencia_publicacao,
+    pilares_conteudo:      dt.pilares_conteudo,
+    assuntos_quentes:      dt.assuntos_quentes,
+    ideias_titulos:        dt.ideias_de_titulos,
+    ganchos_modelo:        dt.ganchos_modelo,
+    ctas_recomendados:     dt.ctas_recomendados,
+    hashtags_estrategicas: dt.hashtags_estrategicas,
+    identidade_visual:     dt.identidade_visual,
+    stories_recorrentes:   dt.stories_recorrentes,
+    kpis_acompanhar:       dt.kpis_acompanhar,
+    briefing_redatores:    dt.briefing_redatores,
+    briefing_designers:    dt.briefing_designers,
+    calendario_30_dias:    dt.calendario_30_dias,
+  };
+  Object.entries(map).forEach(([k, v]) => { if (v !== undefined) payload[k] = v; });
+
+  try {
+    const filter = plano_id
+      ? `id=eq.${plano_id}`
+      : `cliente_handle=eq.${handle}&order=criado_em.desc&limit=1`;
+
+    await axios.patch(
+      `${SUPA_URL}/rest/v1/planos_diretores?${filter}`,
+      payload,
+      { headers: supaHeaders() }
+    );
+    res.json({ ok: true, salvo_em: new Date().toISOString() });
+  } catch (e) {
+    res.status(500).json({ error: e.response?.data || e.message });
   }
 });
 
