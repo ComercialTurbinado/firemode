@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Radar IA — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet"/>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--surface:#181818;--surface2:#222;--border:#2a2a2a;
+  --orange:#FF6600;--green:#00B37E;--yellow:#FFD600;--red:#FF4444;
+  --text:#f0f0f0;--muted:#888;--input-bg:#1e1e1e;
+  --sidebar:240px;--header:60px;
+}
+body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+/* ── HEADER ── */
+.header{height:var(--header);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:fixed;top:0;left:0;right:0;z-index:100}
+.header-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:var(--orange);letter-spacing:-0.5px}
+.header-logo span{color:var(--text);font-weight:500}
+.header-handle{font-size:13px;color:var(--muted);background:var(--surface2);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+.header-nicho{font-size:12px;color:var(--muted);margin-left:4px}
+.header-spacer{flex:1}
+.header-status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.btn{font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;padding:8px 20px;border-radius:6px;border:none;cursor:pointer;transition:.15s}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:#e55a00}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+/* ── LAYOUT ── */
+.layout{display:flex;margin-top:var(--header);min-height:calc(100vh - var(--header))}
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);position:fixed;top:var(--header);bottom:0;left:0;overflow-y:auto;padding:16px 0}
+.sidebar-section{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:16px 20px 6px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:var(--muted);cursor:pointer;transition:.1s;border-left:3px solid transparent}
+.sidebar-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.sidebar-item.active{color:var(--orange);background:rgba(255,102,0,.08);border-left-color:var(--orange)}
+.sidebar-item .icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;padding:32px;max-width:900px}
+/* ── SECTION ── */
+.section-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:20px;margin-bottom:4px}
+.section-desc{font-size:13px;color:var(--muted);margin-bottom:28px}
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-label{font-family:'Montserrat',sans-serif;font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+/* ── INPUTS ── */
+input[type=text],input[type=number],input[type=time],select,textarea{
+  width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:'Roboto',sans-serif;font-size:14px;
+  padding:9px 12px;outline:none;transition:.15s;resize:vertical
+}
+input[type=text]:focus,input[type=number]:focus,input[type=time]:focus,textarea:focus,select:focus{border-color:var(--orange)}
+input[type=color]{width:40px;height:32px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;padding:2px}
+textarea{min-height:80px}
+/* ── TAGS / CHIPS ── */
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,102,0,.12);border:1px solid rgba(255,102,0,.25);color:var(--orange);border-radius:20px;padding:4px 12px;font-size:12px}
+.tag-del{cursor:pointer;opacity:.6;font-size:14px;line-height:1;flex-shrink:0}
+.tag-del:hover{opacity:1;color:var(--red)}
+.tag-add{display:flex;gap:8px;margin-top:8px}
+.tag-add input{flex:1;max-width:280px}
+.btn-add{background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;white-space:nowrap}
+.btn-add:hover{border-color:var(--orange);color:var(--orange)}
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* ── PILAR CARD ── */
+.pilar-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px}
+.pilar-pct{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pilar-pct input[type=number]{width:72px;text-align:center}
+.pilar-pct .pct-label{color:var(--muted);font-size:13px;white-space:nowrap}
+.pct-bar{height:4px;border-radius:2px;background:rgba(255,102,0,.15);margin-bottom:12px}
+.pct-fill{height:100%;border-radius:2px;background:var(--orange);transition:.3s}
+/* ── PALETA ── */
+.paleta-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.paleta-row:last-child{border-bottom:none}
+.paleta-swatch{width:36px;height:36px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}
+.paleta-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer}
+.paleta-name{font-weight:500;font-size:13px;min-width:90px}
+.paleta-hex{font-family:monospace;font-size:12px;color:var(--muted);min-width:70px}
+/* ── KPI TABLE ── */
+.kpi-table{width:100%;border-collapse:collapse;font-size:13px}
+.kpi-table th{text-align:left;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border)}
+.kpi-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.kpi-table tr:last-child td{border-bottom:none}
+.kpi-table input{background:transparent;border:none;padding:0;font-size:13px;color:var(--text)}
+.kpi-table input:focus{outline:1px solid var(--orange);border-radius:3px;padding:2px 4px}
+/* ── POST CARD ── */
+.post-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.post-header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+.post-day{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--orange)}
+.post-fmt{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;font-family:'Montserrat',sans-serif}
+.fmt-carrossel{background:rgba(0,179,126,.15);color:var(--green)}
+.fmt-foto{background:rgba(255,214,0,.15);color:var(--yellow)}
+.post-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.post-field label{display:block;font-size:11px;font-weight:600;font-family:'Montserrat',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.slide-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px}
+.slide-num{font-size:10px;font-weight:700;font-family:'Montserrat',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+/* ── STORIES ── */
+.story-row{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+.story-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0;margin-top:2px}
+.story-del:hover{color:var(--red)}
+.story-fields{flex:1;display:grid;grid-template-columns:1fr 120px;gap:10px}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 20px;font-size:13px;display:flex;align-items:center;gap:10px;z-index:200;transform:translateY(80px);opacity:0;transition:.3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+/* ── LOADING ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:16px;color:var(--muted)}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hint{font-size:11px;color:var(--muted)}
+.section-badge{display:inline-block;font-size:10px;font-weight:700;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.7px;padding:2px 8px;border-radius:4px;margin-bottom:12px}
+.badge-orange{background:rgba(255,102,0,.15);color:var(--orange)}
+.badge-green{background:rgba(0,179,126,.15);color:var(--green)}
+.unsaved-dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--yellow);flex-shrink:0}
+.unsaved-dot.show{display:inline-block}
+</style>
+</head>
+<body x-data="dashboard()" x-init="init()">
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">Radar <span>IA</span></div>
+  <template x-if="data">
+    <span class="header-handle">@<span x-text="data.handle_cliente"></span></span>
+  </template>
+  <template x-if="data">
+    <span class="header-nicho" x-text="data.nicho"></span>
+  </template>
+  <div class="header-spacer"></div>
+  <div class="header-status">
+    <div class="status-dot" :style="saved ? 'background:var(--green)' : 'background:var(--yellow)'"></div>
+    <span x-text="saved ? 'Salvo' : 'Alterações pendentes'"></span>
+  </div>
+  <button class="btn btn-ghost" style="margin-left:12px" @click="resetSection()">Desfazer</button>
+  <button class="btn btn-primary" style="margin-left:8px" :disabled="saving" @click="saveAll()">
+    <span x-show="!saving">Salvar alterações</span>
+    <span x-show="saving">Salvando…</span>
+  </button>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Estratégia</div>
+    <template x-for="item in navItems" :key="item.id">
+      <div class="sidebar-item" :class="{active: activeSection===item.id}" @click="activeSection=item.id">
+        <span class="icon" x-text="item.icon"></span>
+        <span x-text="item.label"></span>
+        <span class="unsaved-dot" :class="{show: dirtyMap[item.id]}"></span>
+      </div>
+    </template>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Loading -->
+    <div class="loading" x-show="loading">
+      <div class="spinner"></div>
+      <span>Carregando suas diretrizes…</span>
+    </div>
+
+    <!-- Error -->
+    <div x-show="!loading && error" style="color:var(--red);padding:40px 0">
+      <p x-text="error"></p>
+    </div>
+
+    <!-- Content -->
+    <div x-show="!loading && data">
+
+      <!-- TOM DE VOZ -->
+      <section x-show="activeSection==='tom'">
+        <div class="section-badge badge-orange">Tom de Voz</div>
+        <h2 class="section-title">Como você se comunica</h2>
+        <p class="section-desc">Defina a personalidade da sua marca e as regras de linguagem para todos os conteúdos.</p>
+
+        <div class="card">
+          <div class="card-label">Personalidade da marca</div>
+          <input type="text" x-model="dt.tom_de_voz.personalidade" @input="markDirty('tom')" placeholder="Ex: Consultivo, Direto, Confiante, Internacional"/>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Como falar <span class="hint">(diretrizes)</span></div><button class="btn-add" @click="addItem(dt.tom_de_voz.como_falar,'tom')">+ Adicionar</button></div>
+          <div x-show="(dt.tom_de_voz.como_falar||[]).length===0" style="color:var(--muted);font-size:13px">Nenhuma diretriz ainda.</div>
+          <template x-for="(item, i) in (dt.tom_de_voz.como_falar||[])" :key="i">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+              <input type="text" :value="item" @input="dt.tom_de_voz.como_falar[i]=$event.target.value;markDirty('tom')"/>
+              <button class="tag-del" @click="dt.tom_de_voz.como_falar.splice(i,1);markDirty('tom')">✕</button>
+            </div>
+          </template>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Como NÃO falar <span class="hint">(proibições)</span></div><button class="btn-add" @click="addItem(dt.tom_de_voz.como_nao_falar,'tom')">+ Adicionar</button></div>
+          <template x-for="(item, i) in (dt.tom_de_voz.como_nao_falar||[])" :key="i">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+              <input type="text" :value="item" @input="dt.tom_de_voz.como_nao_falar[i]=$event.target.value;markDirty('tom')"/>
+              <button class="tag-del" @click="dt.tom_de_voz.como_nao_falar.splice(i,1);markDirty('tom')">✕</button>
+            </div>
+          </template>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="label-row"><div class="card-label">✅ Frases modelo</div><button class="btn-add" @click="addItem(dt.tom_de_voz.exemplos_frase_ok,'tom')">+</button></div>
+            <template x-for="(item, i) in (dt.tom_de_voz.exemplos_frase_ok||[])" :key="i">
+              <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+                <input type="text" :value="item" @input="dt.tom_de_voz.exemplos_frase_ok[i]=$event.target.value;markDirty('tom')"/>
+                <button class="tag-del" @click="dt.tom_de_voz.exemplos_frase_ok.splice(i,1);markDirty('tom')">✕</button>
+              </div>
+            </template>
+          </div>
+          <div class="card">
+            <div class="label-row"><div class="card-label">❌ Frases a evitar</div><button class="btn-add" @click="addItem(dt.tom_de_voz.exemplos_frase_evitar,'tom')">+</button></div>
+            <template x-for="(item, i) in (dt.tom_de_voz.exemplos_frase_evitar||[])" :key="i">
+              <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+                <input type="text" :value="item" @input="dt.tom_de_voz.exemplos_frase_evitar[i]=$event.target.value;markDirty('tom')"/>
+                <button class="tag-del" @click="dt.tom_de_voz.exemplos_frase_evitar.splice(i,1);markDirty('tom')">✕</button>
+              </div>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEO -->
+      <section x-show="activeSection==='seo'">
+        <div class="section-badge badge-green">SEO Instagram</div>
+        <h2 class="section-title">Posicionamento de busca</h2>
+        <p class="section-desc">Palavras-chave e bio otimizadas para o algoritmo do Instagram.</p>
+
+        <div class="card">
+          <div class="card-label">Bio otimizada</div>
+          <textarea x-model="dt.seo_instagram.bio_otimizada" @input="markDirty('seo')" rows="3" placeholder="Bio completa pronta para copiar"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Instrução de uso em legenda</div>
+          <textarea x-model="dt.seo_instagram.uso_em_legenda" @input="markDirty('seo')" rows="2"></textarea>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="label-row"><div class="card-label">Palavras-chave principais</div><button class="btn-add" @click="addItem(dt.seo_instagram.palavras_chave_principais,'seo')">+</button></div>
+            <div class="tag-list">
+              <template x-for="(kw, i) in (dt.seo_instagram.palavras_chave_principais||[])" :key="i">
+                <span class="tag"><span x-text="kw"></span><span class="tag-del" @click="dt.seo_instagram.palavras_chave_principais.splice(i,1);markDirty('seo')">✕</span></span>
+              </template>
+            </div>
+            <div class="tag-add"><input type="text" x-ref="kwMain" placeholder="nova palavra-chave"/><button class="btn-add" @click="pushTagRef(dt.seo_instagram.palavras_chave_principais,$refs.kwMain,'seo')">Adicionar</button></div>
+          </div>
+          <div class="card">
+            <div class="label-row"><div class="card-label">Palavras-chave secundárias</div></div>
+            <div class="tag-list">
+              <template x-for="(kw, i) in (dt.seo_instagram.palavras_chave_secundarias||[])" :key="i">
+                <span class="tag" style="background:rgba(0,179,126,.1);border-color:rgba(0,179,126,.3);color:var(--green)"><span x-text="kw"></span><span class="tag-del" @click="dt.seo_instagram.palavras_chave_secundarias.splice(i,1);markDirty('seo')">✕</span></span>
+              </template>
+            </div>
+            <div class="tag-add"><input type="text" x-ref="kwSec" placeholder="nova palavra-chave"/><button class="btn-add" @click="pushTagRef(dt.seo_instagram.palavras_chave_secundarias,$refs.kwSec,'seo')">Adicionar</button></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Hashtags fixas (em todo post)</div><button class="btn-add" @click="addItem(dt.seo_instagram.hashtags_fixas,'seo')">+</button></div>
+          <div class="tag-list">
+            <template x-for="(h, i) in (dt.seo_instagram.hashtags_fixas||[])" :key="i">
+              <span class="tag"><span x-text="h"></span><span class="tag-del" @click="dt.seo_instagram.hashtags_fixas.splice(i,1);markDirty('seo')">✕</span></span>
+            </template>
+          </div>
+          <div class="tag-add"><input type="text" x-ref="htFixed" placeholder="#hashtag"/><button class="btn-add" @click="pushTagRef(dt.seo_instagram.hashtags_fixas,$refs.htFixed,'seo')">Adicionar</button></div>
+        </div>
+      </section>
+
+      <!-- FREQUÊNCIA -->
+      <section x-show="activeSection==='freq'">
+        <div class="section-badge badge-orange">Frequência</div>
+        <h2 class="section-title">Calendário de publicação</h2>
+        <p class="section-desc">Defina o ritmo ideal de postagens para o seu nicho.</p>
+
+        <div class="grid-3">
+          <div class="card" style="text-align:center">
+            <div class="card-label">Posts / semana</div>
+            <input type="number" x-model.number="dt.frequencia_publicacao.posts_por_semana" @input="markDirty('freq')" min="1" max="21" style="text-align:center;font-size:28px;font-family:Montserrat;font-weight:700;border:none;background:transparent"/>
+          </div>
+          <div class="card" style="text-align:center">
+            <div class="card-label">Posts / dia</div>
+            <input type="number" x-model.number="dt.frequencia_publicacao.posts_por_dia" @input="markDirty('freq')" min="0" max="5" step="0.5" style="text-align:center;font-size:28px;font-family:Montserrat;font-weight:700;border:none;background:transparent"/>
+          </div>
+          <div class="card" style="text-align:center">
+            <div class="card-label">Melhor horário</div>
+            <input type="time" x-model="dt.frequencia_publicacao.melhor_horario" @input="markDirty('freq')" style="text-align:center;font-size:22px;font-family:Montserrat;font-weight:700;border:none;background:transparent"/>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Horários recomendados</div><button class="btn-add" @click="addItem(dt.frequencia_publicacao.melhores_horarios,'freq')">+</button></div>
+          <div class="tag-list">
+            <template x-for="(h, i) in (dt.frequencia_publicacao.melhores_horarios||[])" :key="i">
+              <span class="tag"><span x-text="h"></span><span class="tag-del" @click="dt.frequencia_publicacao.melhores_horarios.splice(i,1);markDirty('freq')">✕</span></span>
+            </template>
+          </div>
+          <div class="tag-add"><input type="text" x-ref="hrInput" placeholder="Ex: 19h00 seg-sex"/><button class="btn-add" @click="pushTagRef(dt.frequencia_publicacao.melhores_horarios,$refs.hrInput,'freq')">Adicionar</button></div>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Dias de pico</div></div>
+          <div class="tag-list">
+            <template x-for="dia in ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo']" :key="dia">
+              <span class="tag" :style="(dt.frequencia_publicacao.dias_de_pico||[]).includes(dia.toLowerCase()) ? 'background:rgba(255,102,0,.2);border-color:var(--orange)' : 'background:var(--surface2);border-color:var(--border);color:var(--muted)'" style="cursor:pointer" @click="toggleDia(dia.toLowerCase())">
+                <span x-text="dia"></span>
+              </span>
+            </template>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Mix de formatos</div>
+          <div class="grid-3" style="margin-top:12px">
+            <div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Reels %</div>
+              <input type="number" x-model.number="dt.frequencia_publicacao.distribuicao_formatos.reels_pct" @input="markDirty('freq')" min="0" max="100" style="text-align:center"/>
+            </div>
+            <div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Carrossel %</div>
+              <input type="number" x-model.number="dt.frequencia_publicacao.distribuicao_formatos.carrossel_pct" @input="markDirty('freq')" min="0" max="100" style="text-align:center"/>
+            </div>
+            <div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Foto %</div>
+              <input type="number" x-model.number="dt.frequencia_publicacao.distribuicao_formatos.foto_pct" @input="markDirty('freq')" min="0" max="100" style="text-align:center"/>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PILARES -->
+      <section x-show="activeSection==='pilares'">
+        <div class="section-badge badge-green">Pilares</div>
+        <h2 class="section-title">Pilares de conteúdo</h2>
+        <p class="section-desc">Os temas centrais que organizam toda a sua produção de conteúdo.</p>
+
+        <template x-for="(pilar, i) in (dt.pilares_conteudo||[])" :key="i">
+          <div class="pilar-card" style="margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <input type="text" :value="pilar.pilar" @input="pilar.pilar=$event.target.value;markDirty('pilares')" style="font-family:Montserrat;font-weight:600;font-size:15px;border:none;background:transparent;padding:0;flex:1"/>
+              <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px" @click="dt.pilares_conteudo.splice(i,1);markDirty('pilares')">✕</button>
+            </div>
+            <div class="pilar-pct">
+              <input type="number" :value="pilar.porcentagem" @input="pilar.porcentagem=Number($event.target.value);markDirty('pilares')" min="0" max="100"/>
+              <span class="pct-label">% dos posts</span>
+            </div>
+            <div class="pct-bar"><div class="pct-fill" :style="`width:${pilar.porcentagem||0}%`"></div></div>
+            <div style="margin-bottom:8px">
+              <div class="card-label" style="margin-bottom:4px">Descrição</div>
+              <textarea :value="pilar.descricao" @input="pilar.descricao=$event.target.value;markDirty('pilares')" rows="2"></textarea>
+            </div>
+            <div>
+              <div class="card-label" style="margin-bottom:4px">Exemplo de referência</div>
+              <input type="text" :value="pilar.exemplo_concorrente" @input="pilar.exemplo_concorrente=$event.target.value;markDirty('pilares')"/>
+            </div>
+          </div>
+        </template>
+        <button class="btn btn-ghost" style="width:100%;margin-top:8px" @click="dt.pilares_conteudo.push({pilar:'Novo Pilar',porcentagem:10,descricao:'',exemplo_concorrente:''});markDirty('pilares')">+ Adicionar pilar</button>
+      </section>
+
+      <!-- HASHTAGS -->
+      <section x-show="activeSection==='hashtags'">
+        <div class="section-badge badge-orange">Hashtags</div>
+        <h2 class="section-title">Estratégia de hashtags</h2>
+        <p class="section-desc">Grupos de hashtags segmentados por objetivo e volume.</p>
+
+        <template x-for="grupo in hashtagGrupos" :key="grupo.key">
+          <div class="card" style="margin-bottom:12px">
+            <div class="label-row">
+              <div>
+                <div class="card-label" x-text="grupo.label"></div>
+                <div class="hint" x-text="grupo.hint"></div>
+              </div>
+            </div>
+            <div class="tag-list">
+              <template x-for="(h, i) in (dt.hashtags_estrategicas[grupo.key]||[])" :key="i">
+                <span class="tag" :style="`background:${grupo.bg};border-color:${grupo.border};color:${grupo.color}`">
+                  <span x-text="h"></span><span class="tag-del" @click="dt.hashtags_estrategicas[grupo.key].splice(i,1);markDirty('hashtags')">✕</span>
+                </span>
+              </template>
+            </div>
+            <div class="tag-add">
+              <input type="text" :x-ref="grupo.ref" :placeholder="'#' + grupo.key" @keydown.enter="pushTagByKey(grupo.key,$event)"/>
+              <button class="btn-add" @click="pushTagByKeyBtn(grupo.key,$event)">Adicionar</button>
+            </div>
+          </div>
+        </template>
+      </section>
+
+      <!-- GANCHOS & CTAs -->
+      <section x-show="activeSection==='ganchos'">
+        <div class="section-badge badge-green">Ganchos & CTAs</div>
+        <h2 class="section-title">Arsenal de copy</h2>
+        <p class="section-desc">Frases de abertura e chamadas para ação prontas para usar.</p>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Ganchos 0–3s (abertura)</div><button class="btn-add" @click="dt.ganchos_modelo.push('Novo gancho');markDirty('ganchos')">+ Adicionar</button></div>
+          <template x-for="(g, i) in (dt.ganchos_modelo||[])" :key="i">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+              <div style="font-family:Montserrat;font-weight:700;font-size:11px;color:var(--orange);min-width:20px;text-align:right" x-text="i+1"></div>
+              <input type="text" :value="g" @input="dt.ganchos_modelo[i]=$event.target.value;markDirty('ganchos')"/>
+              <button class="tag-del" @click="dt.ganchos_modelo.splice(i,1);markDirty('ganchos')">✕</button>
+            </div>
+          </template>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">CTAs recomendados</div><button class="btn-add" @click="dt.ctas_recomendados.push('Novo CTA');markDirty('ganchos')">+ Adicionar</button></div>
+          <template x-for="(c, i) in (dt.ctas_recomendados||[])" :key="i">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+              <div style="font-family:Montserrat;font-weight:700;font-size:11px;color:var(--green);min-width:20px;text-align:right" x-text="i+1"></div>
+              <input type="text" :value="c" @input="dt.ctas_recomendados[i]=$event.target.value;markDirty('ganchos')"/>
+              <button class="tag-del" @click="dt.ctas_recomendados.splice(i,1);markDirty('ganchos')">✕</button>
+            </div>
+          </template>
+        </div>
+
+        <div class="card">
+          <div class="label-row"><div class="card-label">Assuntos quentes</div><button class="btn-add" @click="dt.assuntos_quentes.push('Novo assunto');markDirty('ganchos')">+ Adicionar</button></div>
+          <template x-for="(a, i) in (dt.assuntos_quentes||[])" :key="i">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+              <input type="text" :value="a" @input="dt.assuntos_quentes[i]=$event.target.value;markDirty('ganchos')"/>
+              <button class="tag-del" @click="dt.assuntos_quentes.splice(i,1);markDirty('ganchos')">✕</button>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- IDENTIDADE VISUAL -->
+      <section x-show="activeSection==='visual'">
+        <div class="section-badge badge-orange">Identidade Visual</div>
+        <h2 class="section-title">Sua marca visual</h2>
+        <p class="section-desc">Paleta de cores, tipografia e diretrizes visuais.</p>
+
+        <div class="card">
+          <div class="card-label">Paleta de cores</div>
+          <template x-for="(cor, i) in (dt.identidade_visual.paleta_cores||[])" :key="i">
+            <div class="paleta-row">
+              <div class="paleta-swatch" :style="`background:${cor.hex||'#333'}`">
+                <input type="color" :value="cor.hex" @input="cor.hex=$event.target.value;markDirty('visual')"/>
+              </div>
+              <input type="text" :value="cor.hex" @input="cor.hex=$event.target.value;markDirty('visual')" style="width:90px;font-family:monospace"/>
+              <input type="text" :value="cor.nome" @input="cor.nome=$event.target.value;markDirty('visual')" style="width:110px" placeholder="Nome"/>
+              <input type="text" :value="cor.uso" @input="cor.uso=$event.target.value;markDirty('visual')" placeholder="Onde usar esta cor"/>
+              <button class="tag-del" @click="dt.identidade_visual.paleta_cores.splice(i,1);markDirty('visual')">✕</button>
+            </div>
+          </template>
+          <button class="btn-add" style="margin-top:10px" @click="dt.identidade_visual.paleta_cores.push({nome:'Nova Cor',hex:'#000000',uso:''});markDirty('visual')">+ Adicionar cor</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-label">Font display (títulos)</div>
+            <input type="text" x-model="dt.identidade_visual.tipografia.display" @input="markDirty('visual')" placeholder="Ex: Montserrat Bold"/>
+          </div>
+          <div class="card">
+            <div class="card-label">Font texto (legendas)</div>
+            <input type="text" x-model="dt.identidade_visual.tipografia.texto" @input="markDirty('visual')" placeholder="Ex: Roboto Regular"/>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Estilo fotográfico</div>
+          <textarea x-model="dt.identidade_visual.estilo_fotografico" @input="markDirty('visual')" rows="2"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Estilo gráfico (reels/carrosseis)</div>
+          <textarea x-model="dt.identidade_visual.estilo_grafico" @input="markDirty('visual')" rows="2"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Diretrizes de aparição em câmera</div>
+          <textarea x-model="dt.identidade_visual.vestimenta_aparicoes.diretrizes" @input="markDirty('visual')" rows="2"></textarea>
+        </div>
+      </section>
+
+      <!-- STORIES -->
+      <section x-show="activeSection==='stories'">
+        <div class="section-badge badge-green">Stories</div>
+        <h2 class="section-title">Stories recorrentes</h2>
+        <p class="section-desc">Formatos fixos que mantêm consistência e expectativa no seu público.</p>
+
+        <template x-for="(story, i) in (dt.stories_recorrentes||[])" :key="i">
+          <div class="story-row">
+            <button class="story-del" @click="dt.stories_recorrentes.splice(i,1);markDirty('stories')">✕</button>
+            <div class="story-fields">
+              <input type="text" :value="story.tipo" @input="story.tipo=$event.target.value;markDirty('stories')" placeholder="Nome do story"/>
+              <select @change="story.frequencia=$event.target.value;markDirty('stories')">
+                <option value="diário" :selected="story.frequencia==='diário'">Diário</option>
+                <option value="semanal" :selected="story.frequencia==='semanal'">Semanal</option>
+                <option value="quinzenal" :selected="story.frequencia==='quinzenal'">Quinzenal</option>
+              </select>
+              <textarea :value="story.descricao" @input="story.descricao=$event.target.value;markDirty('stories')" rows="2" placeholder="O que postar e qual objetivo" style="grid-column:1/-1"></textarea>
+            </div>
+          </div>
+        </template>
+        <button class="btn btn-ghost" style="width:100%;margin-top:12px" @click="dt.stories_recorrentes.push({tipo:'Novo Story',frequencia:'semanal',descricao:''});markDirty('stories')">+ Adicionar story</button>
+      </section>
+
+      <!-- KPIs -->
+      <section x-show="activeSection==='kpis'">
+        <div class="section-badge badge-orange">KPIs</div>
+        <h2 class="section-title">Metas e indicadores</h2>
+        <p class="section-desc">Acompanhe o progresso da estratégia com métricas claras.</p>
+
+        <div class="card" style="overflow-x:auto">
+          <table class="kpi-table">
+            <thead>
+              <tr><th>KPI</th><th>Baseline</th><th>Meta 30d</th><th>Meta 60d</th><th>Meta 90d</th><th>Como medir</th><th></th></tr>
+            </thead>
+            <tbody>
+              <template x-for="(kpi, i) in (dt.kpis_acompanhar||[])" :key="i">
+                <tr>
+                  <td><input type="text" :value="kpi.kpi" @input="kpi.kpi=$event.target.value;markDirty('kpis')" style="min-width:120px"/></td>
+                  <td><input type="text" :value="kpi.baseline" @input="kpi.baseline=$event.target.value;markDirty('kpis')" style="min-width:70px"/></td>
+                  <td><input type="text" :value="kpi.meta_30d" @input="kpi.meta_30d=$event.target.value;markDirty('kpis')" style="min-width:70px"/></td>
+                  <td><input type="text" :value="kpi.meta_60d" @input="kpi.meta_60d=$event.target.value;markDirty('kpis')" style="min-width:70px"/></td>
+                  <td><input type="text" :value="kpi.meta_90d" @input="kpi.meta_90d=$event.target.value;markDirty('kpis')" style="min-width:70px"/></td>
+                  <td><input type="text" :value="kpi.como_medir" @input="kpi.como_medir=$event.target.value;markDirty('kpis')" style="min-width:160px"/></td>
+                  <td><button class="tag-del" @click="dt.kpis_acompanhar.splice(i,1);markDirty('kpis')">✕</button></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <button class="btn-add" style="margin-top:12px" @click="dt.kpis_acompanhar.push({kpi:'Novo KPI',baseline:'—',meta_30d:'—',meta_60d:'—',meta_90d:'—',como_medir:''});markDirty('kpis')">+ Adicionar KPI</button>
+        </div>
+      </section>
+
+      <!-- POSTS GERADOS -->
+      <section x-show="activeSection==='posts'">
+        <div class="section-badge badge-green">Posts gerados</div>
+        <h2 class="section-title">7 posts prontos para publicar</h2>
+        <p class="section-desc">Edite a legenda, os slides e os detalhes de cada post gerado pela IA.</p>
+
+        <template x-for="(post, pi) in postsGPT()" :key="pi">
+          <div class="post-card">
+            <div class="post-header">
+              <span class="post-day">Dia <span x-text="post.dia"></span></span>
+              <span class="post-fmt" :class="post.formato==='Carrossel' ? 'fmt-carrossel' : 'fmt-foto'" x-text="post.formato"></span>
+              <span style="font-size:12px;color:var(--muted)" x-text="post.dia_semana"></span>
+              <span style="flex:1"></span>
+              <span style="font-size:11px;color:var(--muted)" x-text="post.pilar"></span>
+            </div>
+            <div class="post-body">
+              <div class="post-field">
+                <label>Tema</label>
+                <input type="text" :value="post.tema" @input="post.tema=$event.target.value;markDirty('posts')"/>
+              </div>
+              <div class="grid-2">
+                <div class="post-field">
+                  <label>Gancho 0–3s</label>
+                  <input type="text" :value="post.gancho_3s" @input="post.gancho_3s=$event.target.value;markDirty('posts')"/>
+                </div>
+                <div class="post-field">
+                  <label>CTA</label>
+                  <input type="text" :value="post.cta" @input="post.cta=$event.target.value;markDirty('posts')"/>
+                </div>
+              </div>
+              <div class="post-field">
+                <label>Legenda completa</label>
+                <textarea :value="post.legenda_completa||post.sugestao_legenda" @input="post.legenda_completa=$event.target.value;markDirty('posts')" rows="5"></textarea>
+              </div>
+              <div class="post-field">
+                <label>Hashtags</label>
+                <input type="text" :value="(post.hashtags||[]).join(' ')" @input="post.hashtags=$event.target.value.split(/\s+/).filter(Boolean);markDirty('posts')" placeholder="#tag1 #tag2 #tag3"/>
+              </div>
+
+              <!-- Carrossel slides -->
+              <template x-if="post.formato==='Carrossel' && post.slides_carrossel">
+                <div>
+                  <div class="card-label" style="margin-bottom:10px">Slides do carrossel</div>
+                  <div class="slide-item">
+                    <div class="slide-num">Capa</div>
+                    <input type="text" :value="post.slides_carrossel.slide_capa?.titulo" @input="if(!post.slides_carrossel.slide_capa)post.slides_carrossel.slide_capa={};post.slides_carrossel.slide_capa.titulo=$event.target.value;markDirty('posts')" placeholder="Título da capa"/>
+                    <input type="text" :value="post.slides_carrossel.slide_capa?.visual_sugerido" @input="post.slides_carrossel.slide_capa.visual_sugerido=$event.target.value;markDirty('posts')" placeholder="Descrição visual" style="margin-top:6px"/>
+                  </div>
+                  <template x-for="(slide, si) in (post.slides_carrossel.slides||[])" :key="si">
+                    <div class="slide-item">
+                      <div class="slide-num">Slide <span x-text="si+1"></span></div>
+                      <input type="text" :value="slide.titulo" @input="slide.titulo=$event.target.value;markDirty('posts')" placeholder="Título do slide"/>
+                      <textarea :value="slide.conteudo_principal" @input="slide.conteudo_principal=$event.target.value;markDirty('posts')" rows="2" placeholder="Conteúdo do slide" style="margin-top:6px"></textarea>
+                      <input type="text" :value="slide.visual_sugerido" @input="slide.visual_sugerido=$event.target.value;markDirty('posts')" placeholder="Visual sugerido" style="margin-top:6px;font-size:12px;color:var(--muted)"/>
+                    </div>
+                  </template>
+                  <div class="slide-item">
+                    <div class="slide-num">Slide final (CTA)</div>
+                    <input type="text" :value="post.slides_carrossel.slide_final?.cta" @input="if(!post.slides_carrossel.slide_final)post.slides_carrossel.slide_final={};post.slides_carrossel.slide_final.cta=$event.target.value;markDirty('posts')" placeholder="CTA do slide final"/>
+                    <input type="text" :value="post.slides_carrossel.slide_final?.visual_sugerido" @input="post.slides_carrossel.slide_final.visual_sugerido=$event.target.value;markDirty('posts')" placeholder="Visual sugerido" style="margin-top:6px"/>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Foto detalhes -->
+              <template x-if="post.formato==='Foto' && post.foto_detalhes">
+                <div>
+                  <div class="card-label" style="margin-bottom:10px">Detalhes da foto</div>
+                  <div class="slide-item">
+                    <input type="text" :value="post.foto_detalhes.descricao_imagem" @input="post.foto_detalhes.descricao_imagem=$event.target.value;markDirty('posts')" placeholder="O que deve aparecer na foto"/>
+                    <input type="text" :value="post.foto_detalhes.texto_overlay" @input="post.foto_detalhes.texto_overlay=$event.target.value;markDirty('posts')" placeholder="Texto overlay (se houver)" style="margin-top:6px"/>
+                    <input type="text" :value="post.foto_detalhes.mood" @input="post.foto_detalhes.mood=$event.target.value;markDirty('posts')" placeholder="Mood visual" style="margin-top:6px"/>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </section>
+
+      <!-- BRIEFINGS -->
+      <section x-show="activeSection==='briefings'">
+        <div class="section-badge badge-orange">Briefings</div>
+        <h2 class="section-title">Briefings para sua equipe</h2>
+        <p class="section-desc">Instruções completas para redatores e designers executarem sem dúvidas.</p>
+
+        <div class="card">
+          <div class="card-label">Briefing para redatores</div>
+          <textarea x-model="dt.briefing_redatores" @input="markDirty('briefings')" rows="10"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Briefing para designers</div>
+          <textarea x-model="dt.briefing_designers" @input="markDirty('briefings')" rows="10"></textarea>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" :class="{show: toast.show, success: toast.type==='success', error: toast.type==='error'}" x-text="toast.msg"></div>
+
+<script>
+function dashboard() {
+  return {
+    loading: true,
+    error: null,
+    data: null,
+    dt: null,
+    originalDt: null,
+    saved: true,
+    saving: false,
+    dirtyMap: {},
+    activeSection: 'tom',
+    toast: { show: false, msg: '', type: 'success' },
+
+    navItems: [
+      { id: 'tom',      icon: '💬', label: 'Tom de Voz' },
+      { id: 'seo',      icon: '🔍', label: 'SEO Instagram' },
+      { id: 'freq',     icon: '📅', label: 'Frequência' },
+      { id: 'pilares',  icon: '🏛️', label: 'Pilares' },
+      { id: 'hashtags', icon: '#',  label: 'Hashtags' },
+      { id: 'ganchos',  icon: '⚡', label: 'Ganchos & CTAs' },
+      { id: 'visual',   icon: '🎨', label: 'Identidade Visual' },
+      { id: 'stories',  icon: '📱', label: 'Stories' },
+      { id: 'kpis',     icon: '📊', label: 'KPIs' },
+      { id: 'posts',    icon: '✍️', label: 'Posts gerados' },
+      { id: 'briefings',icon: '📋', label: 'Briefings' },
+    ],
+
+    hashtagGrupos: [
+      { key: 'core',                label: 'Core (marca)',       hint: 'Permanentes em todo post', ref: 'htCore',   bg: 'rgba(255,102,0,.12)',  border: 'rgba(255,102,0,.3)',  color: 'var(--orange)' },
+      { key: 'rotativas_alto_volume',label: 'Alto volume',       hint: '500k–5M posts',            ref: 'htHigh',   bg: 'rgba(0,179,126,.1)',   border: 'rgba(0,179,126,.3)', color: 'var(--green)'  },
+      { key: 'rotativas_nicho',     label: 'Nicho',              hint: '50k–500k posts',           ref: 'htNiche',  bg: 'rgba(255,214,0,.1)',   border: 'rgba(255,214,0,.3)', color: 'var(--yellow)' },
+      { key: 'evite',               label: 'Evitar',             hint: 'Banidas ou saturadas',     ref: 'htAvoid',  bg: 'rgba(255,68,68,.1)',   border: 'rgba(255,68,68,.3)', color: 'var(--red)'    },
+    ],
+
+    async init() {
+      const params = new URLSearchParams(window.location.search);
+      const handle = params.get('handle');
+      if (!handle) { this.error = 'Parâmetro ?handle= não informado na URL.'; this.loading = false; return; }
+
+      try {
+        const r = await fetch(`/api/dashboard/${handle}`);
+        if (!r.ok) throw new Error(`Erro ${r.status}: ${await r.text()}`);
+        const json = await r.json();
+        this.data = json;
+        this.dt = json.diretrizes_tecnicas;
+        this.originalDt = JSON.stringify(this.dt);
+      } catch(e) {
+        this.error = e.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    postsGPT() {
+      const cal = this.dt?.calendario_30_dias || [];
+      return cal.filter(d => d._gpt_gerado);
+    },
+
+    markDirty(section) {
+      this.dirtyMap[section] = true;
+      this.saved = false;
+    },
+
+    addItem(arr, section) {
+      if (Array.isArray(arr)) { arr.push(''); this.markDirty(section); }
+    },
+
+    pushTagRef(arr, inputEl, section) {
+      const v = inputEl.value.trim();
+      if (v && Array.isArray(arr)) { arr.push(v); inputEl.value = ''; this.markDirty(section); }
+    },
+
+    pushTagByKey(groupKey, evt) {
+      if (evt.key !== 'Enter') return;
+      const v = evt.target.value.trim();
+      if (!v) return;
+      if (!this.dt.hashtags_estrategicas[groupKey]) this.dt.hashtags_estrategicas[groupKey] = [];
+      this.dt.hashtags_estrategicas[groupKey].push(v);
+      evt.target.value = '';
+      this.markDirty('hashtags');
+    },
+
+    pushTagByKeyBtn(groupKey, evt) {
+      const input = evt.target.previousElementSibling;
+      const v = input.value.trim();
+      if (!v) return;
+      if (!this.dt.hashtags_estrategicas[groupKey]) this.dt.hashtags_estrategicas[groupKey] = [];
+      this.dt.hashtags_estrategicas[groupKey].push(v);
+      input.value = '';
+      this.markDirty('hashtags');
+    },
+
+    toggleDia(dia) {
+      const arr = this.dt.frequencia_publicacao.dias_de_pico || [];
+      const idx = arr.indexOf(dia);
+      if (idx === -1) arr.push(dia); else arr.splice(idx, 1);
+      if (!this.dt.frequencia_publicacao.dias_de_pico) this.dt.frequencia_publicacao.dias_de_pico = arr;
+      this.markDirty('freq');
+    },
+
+    resetSection() {
+      if (!this.originalDt) return;
+      if (!confirm('Desfazer TODAS as alterações desde o último save?')) return;
+      this.dt = JSON.parse(this.originalDt);
+      this.dirtyMap = {};
+      this.saved = true;
+      this.showToast('Alterações desfeitas.', 'success');
+    },
+
+    async saveAll() {
+      const params = new URLSearchParams(window.location.search);
+      const handle = params.get('handle');
+      this.saving = true;
+      try {
+        const r = await fetch(`/api/dashboard/${handle}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ diretrizes_tecnicas: this.dt }),
+        });
+        if (!r.ok) throw new Error(await r.text());
+        this.originalDt = JSON.stringify(this.dt);
+        this.dirtyMap = {};
+        this.saved = true;
+        this.showToast('Alterações salvas com sucesso! ✓', 'success');
+      } catch(e) {
+        this.showToast('Erro ao salvar: ' + e.message, 'error');
+      } finally {
+        this.saving = false;
+      }
+    },
+
+    showToast(msg, type='success') {
+      this.toast = { show: true, msg, type };
+      setTimeout(() => this.toast.show = false, 3500);
+    },
+  };
+}
+</script>
+</body>
+</html>

@@ -344,6 +344,84 @@ Tom: profissional, direto, orientado a resultado. Use dados específicos.
 // Servir PDFs gerados
 app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 
+// ─── Dashboard estático ───────────────────────────────────────────────────────
+app.use('/dashboard', express.static(path.join(__dirname, '..', 'dashboard.html')));
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dashboard.html'));
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// DASHBOARD — Área do usuário (leitura e edição de diretrizes)
+// GET  /api/dashboard/:handle  → retorna diretrizes_tecnicas do usuário
+// PUT  /api/dashboard/:handle  → salva alterações feitas pelo usuário
+// POST /api/dashboard/:handle  → (interno/n8n) salva análise completa do usuário
+// ═════════════════════════════════════════════════════════════════════════════
+
+const USERS_DIR = path.join(__dirname, '..', 'data', 'users');
+if (!fs.existsSync(USERS_DIR)) fs.mkdirSync(USERS_DIR, { recursive: true });
+
+function userFilePath(handle) {
+  const safe = handle.replace(/[^a-zA-Z0-9_\-]/g, '').toLowerCase();
+  return path.join(USERS_DIR, `${safe}.json`);
+}
+
+// GET /api/dashboard/:handle — sem autenticação (link é privado por handle)
+app.get('/api/dashboard/:handle', (req, res) => {
+  const fp = userFilePath(req.params.handle);
+  if (!fs.existsSync(fp)) {
+    return res.status(404).json({ error: 'Análise não encontrada para este handle.' });
+  }
+  try {
+    const data = JSON.parse(fs.readFileSync(fp, 'utf8'));
+    // Retorna apenas o que o dashboard precisa (sem payload GPT)
+    const { gpt_payload_dossie, gpt_payload_diretor, ...safe } = data;
+    res.json(safe.diretrizes_tecnicas
+      ? { handle_cliente: safe.handle_cliente, nicho: safe.nicho, nome_cliente: safe.nome_cliente, diretrizes_tecnicas: safe.diretrizes_tecnicas }
+      : safe);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// PUT /api/dashboard/:handle — salva edições do usuário (sem auth pois URL é privada)
+app.put('/api/dashboard/:handle', (req, res) => {
+  const fp = userFilePath(req.params.handle);
+  if (!fs.existsSync(fp)) {
+    return res.status(404).json({ error: 'Análise não encontrada.' });
+  }
+  try {
+    const existing = JSON.parse(fs.readFileSync(fp, 'utf8'));
+    const { diretrizes_tecnicas } = req.body;
+    if (!diretrizes_tecnicas) return res.status(400).json({ error: 'Campo diretrizes_tecnicas ausente.' });
+    existing.diretrizes_tecnicas = diretrizes_tecnicas;
+    existing._ultima_edicao_usuario = new Date().toISOString();
+    fs.writeFileSync(fp, JSON.stringify(existing, null, 2));
+    res.json({ ok: true, salvo_em: existing._ultima_edicao_usuario });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/dashboard/:handle — chamado pelo n8n para salvar análise inicial
+app.post('/api/dashboard/:handle', (req, res) => {
+  const authKey = req.headers['x-api-key'];
+  if (authKey !== process.env.API_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const data = req.body;
+    if (!data || !data.plano_diretor) return res.status(400).json({ error: 'JSON de análise inválido.' });
+    // Flatten diretrizes_tecnicas para acesso direto
+    if (data.plano_diretor?.diretrizes_tecnicas && !data.diretrizes_tecnicas) {
+      data.diretrizes_tecnicas = data.plano_diretor.diretrizes_tecnicas;
+    }
+    const fp = userFilePath(req.params.handle);
+    fs.writeFileSync(fp, JSON.stringify(data, null, 2));
+    const dashUrl = `${process.env.BACKEND_URL || 'http://localhost:3000'}/dashboard?handle=${req.params.handle}`;
+    res.json({ ok: true, dashboard_url: dashUrl });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ═════════════════════════════════════════════════════════════════════════════
 // 8. INFOGRÁFICO DE SLIDES — recebe JSON de marketing, retorna HTML visual
 //
