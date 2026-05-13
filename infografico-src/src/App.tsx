@@ -1971,14 +1971,19 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
 
     for (let pg = 0; pg < calPages; pg++) {
       const pageItems = calItems.slice(pg * perPage, (pg + 1) * perPage);
-      const pageLabel = calPages > 1 ? ` (${pg + 1}/${calPages})` : '';
       const pgCopy = pg;
+      // Build title: "Calendário da Semana X · pg/total"
+      const firstItem = pageItems[0] as Record<string, unknown>;
+      const calDia = firstItem?.dia != null ? Number(firstItem.dia) : pg * perPage + 1;
+      const weekNum = Math.ceil(calDia / 7);
+      const calTotalLabel = calPages > 1 ? ` · ${pg + 1}/${calPages}` : '';
+      const calTitle = `📅 Calendário da Semana ${weekNum}${calTotalLabel}`;
       all.push({
         id: `dt-calendario-${pg}`,
         section: 'diretrizes_tecnicas',
         render: () => (
           <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 56, overflow: 'hidden' }}>
-            <div style={{ marginBottom: f(20), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>📅 Calendário 30 Dias{pageLabel}</div>
+            <div style={{ marginBottom: f(20), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>{calTitle}</div>
             <div style={{ display: 'flex', flexDirection: isP ? 'column' : 'row', gap: f(20), flex: 1, overflow: 'hidden' }}>
               {pageItems.map((item, i) => renderCalCard(item, pgCopy * perPage + i, false))}
             </div>
@@ -1986,7 +1991,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
         ),
         renderPrint: () => (
           <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 48, overflow: 'hidden' }}>
-            <div style={{ marginBottom: 16, fontFamily: 'Montserrat', fontWeight: 900, fontSize: 32, color: C.white, textTransform: 'uppercase' }}>📅 Calendário 30 Dias{pageLabel}</div>
+            <div style={{ marginBottom: 16, fontFamily: 'Montserrat', fontWeight: 900, fontSize: 32, color: C.white, textTransform: 'uppercase' }}>{calTitle}</div>
             <div style={{ display: 'flex', gap: 16, flex: 1, overflow: 'hidden' }}>
               {pageItems.map((item, i) => renderCalCard(item, pgCopy * perPage + i, true))}
             </div>
