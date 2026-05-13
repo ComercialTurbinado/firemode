@@ -291,7 +291,7 @@ function extractCompetitorMetrics(posicionamento: string, handle: string) {
 // ─── Slides ───────────────────────────────────────────────────────────────────
 function buildSlides(section: Section, f: Fscale, isP: boolean) {
   const lh = 1.2;
-  const all: { id: string; section: 'overview_cliente' | 'diretrizes_tecnicas'; render: () => JSX.Element }[] = [];
+  const all: { id: string; section: 'overview_cliente' | 'diretrizes_tecnicas'; render: () => JSX.Element; renderPrint?: () => JSX.Element }[] = [];
 
   // ── OVERVIEW ────────────────────────────────────────────────────────────────
   if (section === 'all' || section === 'overview_cliente') {
@@ -1385,7 +1385,7 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
                           const isTop = pct === 100 && count > 0;
                           return (
                             <div key={day} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: f(3) }}>
-                              <div style={{ width: '100%', height: f(36), borderRadius: f(5), background: `${accent}${Math.round(pct * 0.8 + 10).toString(16).padStart(2,'0')}`, border: isTop ? `1px solid ${accent}` : '1px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <div style={{ width: '100%', height: f(30), borderRadius: f(5), background: `${accent}${Math.round(pct * 0.8 + 10).toString(16).padStart(2,'0')}`, border: isTop ? `1px solid ${accent}` : '1px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 {count > 0 && <span style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(9), color: '#fff' }}>{count}p</span>}
                               </div>
                               <span style={{ fontFamily: 'Roboto', fontSize: f(9), color: isTop ? accent : 'rgba(255,255,255,0.35)', fontWeight: isTop ? 700 : 400 }}>{day}</span>
@@ -1417,18 +1417,18 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
     }});
 
     all.push({ id: 'dt-pilares', section: 'diretrizes_tecnicas', render: () => {
-      const pillarColors = [C.primary, C.green, C.yellow, 'rgba(200,200,255,0.8)'];
+      const pillarColors = [C.primary, C.green, C.yellow, 'rgba(200,200,255,0.8)', C.white];
       return (
         <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 56 }}>
           <div style={{ marginBottom: f(24), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>Pilares de Conteúdo</div>
           <div style={{ display: 'flex', flexDirection: isP ? 'column' : 'row', gap: f(40), flex: 1, alignItems: 'flex-start' }}>
-            <DonutChart f={f} data={dt.pilares_conteudo?.map((p2, i) => ({ label: p2.pilar, value: p2.porcentagem, color: pillarColors[i] }))} />
+            <DonutChart f={f} data={dt.pilares_conteudo?.map((p2, i) => ({ label: p2.pilar, value: p2.porcentagem, color: pillarColors[i] ?? C.white }))} />
             <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: f(14), width: isP ? '100%' : undefined }}>
               {dt.pilares_conteudo?.map((p2, i) => (
-                <div key={i} style={{ borderRadius: 16, padding: f(20), background: `${pillarColors[i]}0e`, border: `1px solid ${pillarColors[i]}44` }}>
+                <div key={i} style={{ borderRadius: 16, padding: f(20), background: `${pillarColors[i] ?? C.white}0e`, border: `1px solid ${pillarColors[i] ?? C.white}44` }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: f(10) }}>
-                    <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(16), color: pillarColors[i] }}>{p2.pilar}</div>
-                    <div style={{ borderRadius: '50%', width: f(36), height: f(36), background: pillarColors[i], display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(13), color: i === 2 ? C.secondary : C.white, flexShrink: 0 }}>{p2.porcentagem}%</div>
+                    <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(16), color: pillarColors[i] ?? C.white }}>{p2.pilar}</div>
+                    <div style={{ borderRadius: '50%', width: f(36), height: f(36), background: pillarColors[i] ?? C.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(13), color: (i === 2 || i === 4) ? C.secondary : C.white, flexShrink: 0 }}>{p2.porcentagem}%</div>
                   </div>
                   <p style={{ fontFamily: 'Roboto', fontSize: f(12), color: 'rgba(255,255,255,0.7)', lineHeight: lh, marginBottom: f(8), marginTop: 0 }}>{p2.descricao}</p>
                   {!!p2.por_que_funciona && (
@@ -1508,27 +1508,21 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
       </div>
     )});
 
-    // Slide: Ideias de Títulos + Stories Recorrentes (empilhados verticalmente)
+    // Slide: Ideias de Títulos + Stories Recorrentes
     all.push({ id: 'dt-titulos', section: 'diretrizes_tecnicas', render: () => (
-      <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: isP ? '32px 32px' : '40px 64px', overflow: 'hidden', gap: f(24) }}>
+      <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: isP ? '32px 32px' : '40px 64px' }}>
 
-        {/* Ideias de Títulos */}
+        {/* ── Ideias de Títulos ──────────────────────────────────────────────── */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div style={{ marginBottom: f(14), fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(20), color: C.white, textTransform: 'uppercase' }}>💬 Ideias de Títulos</div>
-          <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: `${f(8)}px ${f(32)}px`, alignContent: 'start', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: `${f(8)}px ${f(32)}px`, flex: 1, overflow: 'hidden', alignContent: 'start' }}>
             {dt.ideias_de_titulos?.map((t: any, i) => {
-              const titulo  = typeof t === 'string' ? t : (t.titulo ?? String(t));
-              const formato = typeof t === 'string' ? null : t.formato_sugerido;
-              const pilar   = typeof t === 'string' ? null : t.pilar;
-              const pCols: Record<string, string> = { 'Transformação': C.primary, 'Storytelling Pessoal': C.green, 'Dicas Práticas': C.yellow, 'Oferta e CTA': 'rgba(200,200,255,0.8)', 'Storytelling Real': C.green, 'Educação & Dica Prática': C.yellow, 'Alerta & Oportunidade': C.primary, 'Bastidor & Prova Social': C.green };
-              const col = pilar ? (pCols[pilar] || C.white) : C.white;
+              const titulo = typeof t === 'string' ? t : (t.titulo ?? String(t));
               return (
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: f(10) }}>
                   <div style={{ width: f(26), height: f(26), borderRadius: '50%', background: C.yellow, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(12), color: C.secondary, flexShrink: 0, marginTop: 2 }}>{i + 1}</div>
                   <div style={{ flex: 1 }}>
                     <span style={{ fontFamily: 'Roboto', fontSize: f(14), color: 'rgba(255,255,255,0.9)', lineHeight: 1.35 }}>{titulo}</span>
-                    {formato && <>{' '}<Tag text={formato} color={C.yellow} f={f} /></>}
-                    {pilar && <>{' '}<Tag text={pilar} color={col} f={f} /></>}
                   </div>
                 </div>
               );
@@ -1536,24 +1530,26 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
           </div>
         </div>
 
-        {/* Divisor */}
+        {/* ── Divisor ────────────────────────────────────────────────────────── */}
         <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
 
-        {/* Stories Recorrentes */}
+        {/* ── Stories Recorrentes ────────────────────────────────────────────── */}
         <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div style={{ marginBottom: f(14), fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(20), color: C.white, textTransform: 'uppercase' }}>📱 Stories Recorrentes</div>
-          <div style={{ display: 'grid', gridTemplateColumns: isP ? '1fr' : '1fr 1fr 1fr', gap: f(10) }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isP ? '1fr' : '1fr 1fr', gap: f(10) }}>
             {dt.stories_recorrentes?.map((s: any, i) => {
-              const storyIcons = ['📊', '📹', '📬', '✅', '💡', '🎯'];
-              const ideia    = typeof s === 'string' ? s : (s.ideia ?? s.tipo ?? s.descricao ?? String(s));
-              const objetivo = typeof s === 'string' ? null : (s.objetivo ?? s.frequencia ?? null);
+              const tipo      = typeof s === 'string' ? null : (s.tipo ?? s.ideia ?? null);
+              const descricao = typeof s === 'string' ? s : (s.descricao ?? s.ideia ?? s.tipo ?? String(s));
+              const frequencia = typeof s === 'string' ? null : (s.frequencia ?? s.objetivo ?? null);
               return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: f(12), borderRadius: 10, padding: `${f(12)}px ${f(16)}px`, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <span style={{ fontSize: f(22), flexShrink: 0 }}>{storyIcons[i % storyIcons.length]}</span>
-                  <div>
-                    <div style={{ fontFamily: 'Roboto', fontSize: f(14), color: 'rgba(255,255,255,0.9)', marginBottom: f(4), lineHeight: 1.3 }}>{ideia}</div>
-                    {objetivo && <Tag text={objetivo} color={C.green} f={f} />}
+                <div key={i} style={{ borderRadius: 10, padding: `${f(12)}px ${f(16)}px`, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  {/* Tipo + Frequência em linha */}
+                  <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: f(4) }}>
+                    {tipo && <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(12), color: C.green }}>{tipo}</div>}
+                    {frequencia && <Tag text={frequencia} color={C.green} f={f} />}
                   </div>
+                  {/* Descrição */}
+                  <div style={{ fontFamily: 'Roboto', fontSize: f(13), color: 'rgba(255,255,255,0.85)', lineHeight: 1.4 }}>{descricao}</div>
                 </div>
               );
             })}
@@ -1790,49 +1786,213 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
       </div>
     )});
 
-    const perPage = isP ? 2 : 3;
+    const perPage = 1; // 1 post por slide — conteúdo completo (legenda + slides carrossel)
     const calItems: Record<string, unknown>[] = dt.calendario_30_dias;
     const calPages = Math.max(1, Math.ceil(calItems.length / perPage));
+
+    // ── helper: render de um card de calendário ─────────────────────────────
+    const renderCalCard = (item: Record<string, unknown>, globalIdx: number, forPrint: boolean) => {
+      const cols = [C.primary, C.green, C.yellow];
+      const col  = cols[globalIdx % cols.length];
+      const sc   = item.slides_carrossel as Record<string, unknown> | undefined;
+      const fd   = item.foto_detalhes   as Record<string, unknown> | undefined;
+      const legenda = String(item.legenda_completa || item.sugestao_legenda || '');
+      const hashtags = (Array.isArray(item.hashtags) ? item.hashtags as string[] : String(item.hashtags || '').split(' ')).filter(Boolean);
+      const slidesList = (sc?.slides as Record<string, unknown>[] | undefined) ?? [];
+
+      if (forPrint) {
+        // ── VERSÃO PDF: compacta, sem overflow, cabe em 1080px ──────────────
+        return (
+          <div key={globalIdx} style={{ flex: 1, borderRadius: 16, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 8, background: `${col}0c`, border: `1px solid ${col}33` }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <div style={{ borderRadius: 8, padding: '4px 10px', background: col, fontFamily: 'Montserrat', fontWeight: 900, fontSize: 13, color: C.secondary }}>Dia {String(item.dia)}</div>
+              <span style={{ fontFamily: 'Roboto', fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>{String(item.dia_semana)}</span>
+              <span style={{ padding: '2px 7px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: col + '22', color: col, border: `1px solid ${col}44`, fontFamily: 'Roboto' }}>{String(item.formato)}</span>
+            </div>
+            {/* Tema + Gancho */}
+            <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: 13, color: C.white, lineHeight: 1.2 }}>{String(item.tema)}</div>
+            <div style={{ fontFamily: 'Roboto', fontSize: 11, color: col }}>🎣 {String(item.gancho_3s)}</div>
+            {/* Mídia: carrossel */}
+            {sc && sc.qtd_slides ? (
+              <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: 8, padding: '7px 9px' }}>
+                <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: 9, color: col, marginBottom: 4 }}>
+                  🃏 {String(sc.qtd_slides)} SLIDES
+                </div>
+                {slidesList.map((s, si) => (
+                  <div key={si} style={{ borderLeft: `2px solid ${col}55`, paddingLeft: 6, marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: 9, color: col }}>
+                      Slide {String(s.numero || si+1)}: {String(s.titulo || '')}
+                    </div>
+                    {s.conteudo_principal ? (
+                      <div style={{ fontFamily: 'Roboto', fontSize: 8, color: 'rgba(255,255,255,0.7)', lineHeight: 1.4, whiteSpace: 'pre-wrap' }}>
+                        {String(s.conteudo_principal)}
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+                {sc.slide_final ? (
+                  <div style={{ fontFamily: 'Roboto', fontSize: 8, color: 'rgba(255,255,255,0.4)', fontStyle: 'italic' }}>
+                    🔚 {String((sc.slide_final as Record<string,unknown>).cta || '')}
+                  </div>
+                ) : null}
+              </div>
+            ) : fd ? (
+              <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: 8, padding: '7px 9px' }}>
+                <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: 9, color: col, marginBottom: 3 }}>📷 FOTO</div>
+                <div style={{ fontFamily: 'Roboto', fontSize: 9, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4 }}>
+                  {String(fd.descricao_imagem || '')}
+                </div>
+                {fd.texto_overlay && (
+                  <div style={{ fontFamily: 'Roboto', fontSize: 9, color: col, marginTop: 2 }}>Overlay: "{String(fd.texto_overlay)}"</div>
+                )}
+              </div>
+            ) : null}
+            {/* Legenda completa */}
+            {legenda ? (
+              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '7px 9px', borderLeft: `3px solid ${col}` }}>
+                <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: 8, color: 'rgba(255,255,255,0.35)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: 1 }}>📝 Legenda</div>
+                <p style={{ fontFamily: 'Roboto', fontSize: 9, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, margin: 0, whiteSpace: 'pre-wrap' }}>{legenda}</p>
+              </div>
+            ) : null}
+            {/* Rodapé */}
+            <div style={{ marginTop: 2 }}>
+              <div style={{ fontFamily: 'Roboto', fontSize: 9, color: C.white }}>CTA: {String(item.cta)}</div>
+              <div style={{ fontFamily: 'Roboto', fontSize: 8, color: col, marginTop: 2 }}>{String(item.pilar)} · {String(item.objetivo)}</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3, marginTop: 3 }}>
+                {hashtags.map((h: string) => (
+                  <span key={h} style={{ fontFamily: 'Roboto', fontSize: 7, color: 'rgba(255,255,255,0.3)' }}>{h}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ── VERSÃO TELA: completa, scrollável ───────────────────────────────────
+      // Bloco de rodapé reutilizado (CTA + pilar + hashtags + objetivo)
+      const footerBlock = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: f(6) }}>
+          <div style={{ padding: `${f(6)}px ${f(10)}px`, borderRadius: 8, background: 'rgba(0,0,0,0.2)' }}>
+            <span style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.4)' }}>CTA: </span>
+            <span style={{ fontFamily: 'Roboto', fontSize: f(11), color: C.white }}>{String(item.cta)}</span>
+          </div>
+          <Tag text={String(item.pilar)} color={col} f={f} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(4) }}>
+            {hashtags.map((h: string) => (
+              <span key={h} style={{ fontFamily: 'Roboto', fontSize: f(9), color: 'rgba(255,255,255,0.35)' }}>{h}</span>
+            ))}
+          </div>
+          <div style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1 }}>🎯 {String(item.objetivo)}</div>
+        </div>
+      );
+
+      return (
+        <div key={globalIdx} style={{ flex: 1, borderRadius: 20, padding: f(22), display: 'flex', flexDirection: 'column', gap: f(10), background: `${col}0c`, border: `1px solid ${col}33`, overflowY: 'auto' }}>
+          {/* Cabeçalho: Dia · Dia da semana · Formato */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: f(10) }}>
+            <div style={{ borderRadius: 10, padding: `${f(6)}px ${f(12)}px`, background: col, fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(16), color: C.secondary }}>Dia {String(item.dia)}</div>
+            <div style={{ fontFamily: 'Roboto', fontSize: f(12), color: 'rgba(255,255,255,0.5)' }}>{String(item.dia_semana)}</div>
+            <Tag text={String(item.formato)} color={col} f={f} />
+          </div>
+          {/* Tema */}
+          <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(15), color: C.white, lineHeight: lh }}>{String(item.tema)}</div>
+          {/* Gancho */}
+          <div style={{ fontFamily: 'Roboto', fontSize: f(12), color: col, lineHeight: lh }}>🎣 {String(item.gancho_3s)}</div>
+
+          {sc && sc.qtd_slides ? (
+            /* ── CARROSSEL: grid 2 colunas (slides | legenda) ─────────────── */
+            <div style={{ display: 'grid', gridTemplateColumns: '3fr 3fr', gap: f(15), flex: 1 }}>
+              {/* Coluna esquerda — slides em grid 2×N */}
+              <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: 10, padding: `${f(8)}px ${f(10)}px`, display: 'grid', gridTemplateColumns: '1fr 1fr', alignContent: 'start' }}>
+                {slidesList.map((s, si) => (
+                  <div key={si} style={{ fontFamily: 'Roboto', fontSize: f(9), color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, borderLeft: `2px solid ${col}55`, paddingLeft: f(6), marginBottom: f(6) }}>
+                    <div style={{ color: col, fontWeight: 700, marginBottom: f(2) }}>Slide {String(s.numero || si+1)}: {String(s.titulo || '')}</div>
+                    {s.conteudo_principal ? <div style={{ color: 'rgba(255,255,255,0.75)', whiteSpace: 'pre-wrap' }}>{String(s.conteudo_principal)}</div> : null}
+                    {s.visual_sugerido ? <div style={{ color: 'rgba(255,255,255,0.35)', fontStyle: 'italic', marginTop: f(2) }}>Visual: {String(s.visual_sugerido)}</div> : null}
+                  </div>
+                ))}
+                {sc.slide_final ? (
+                  <div style={{ gridColumn: '1 / -1', fontFamily: 'Roboto', fontSize: f(9), color: 'rgba(255,255,255,0.4)', marginTop: f(3), fontStyle: 'italic' }}>
+                    🔚 {String((sc.slide_final as Record<string,unknown>).cta || '')}
+                  </div>
+                ) : null}
+              </div>
+              {/* Coluna direita — legenda + rodapé */}
+              <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: `${f(8)}px ${f(10)}px`, borderLeft: `3px solid ${col}`, display: 'flex', flexDirection: 'column', gap: f(8) }}>
+                <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(9), color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1 }}>📝 Legenda</div>
+                {legenda ? (
+                  <p style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: 0, whiteSpace: 'pre-wrap', flex: 1 }}>
+                    {legenda}
+                  </p>
+                ) : null}
+                {footerBlock}
+              </div>
+            </div>
+          ) : fd ? (
+            /* ── FOTO: layout vertical padrão ──────────────────────────────── */
+            <>
+              <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: 10, padding: `${f(8)}px ${f(10)}px` }}>
+                <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(10), color: col, marginBottom: f(4) }}>📷 FOTO</div>
+                <div style={{ fontFamily: 'Roboto', fontSize: f(9), color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
+                  {String(fd.descricao_imagem || '')}
+                </div>
+                {fd.texto_overlay ? (
+                  <div style={{ fontFamily: 'Roboto', fontSize: f(9), color: col, marginTop: f(3) }}>
+                    Overlay: "{String(fd.texto_overlay)}"
+                  </div>
+                ) : null}
+              </div>
+              {legenda ? (
+                <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: `${f(8)}px ${f(10)}px`, borderLeft: `3px solid ${col}` }}>
+                  <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(9), color: 'rgba(255,255,255,0.35)', marginBottom: f(4), textTransform: 'uppercase', letterSpacing: 1 }}>📝 Legenda</div>
+                  <p style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: 0, whiteSpace: 'pre-wrap' }}>
+                    {legenda}
+                  </p>
+                </div>
+              ) : null}
+              {footerBlock}
+            </>
+          ) : (
+            /* ── SEM MÍDIA ─────────────────────────────────────────────────── */
+            <>
+              {legenda ? (
+                <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: `${f(8)}px ${f(10)}px`, borderLeft: `3px solid ${col}` }}>
+                  <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(9), color: 'rgba(255,255,255,0.35)', marginBottom: f(4), textTransform: 'uppercase', letterSpacing: 1 }}>📝 Legenda</div>
+                  <p style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: 0, whiteSpace: 'pre-wrap' }}>{legenda}</p>
+                </div>
+              ) : null}
+              {footerBlock}
+            </>
+          )}
+        </div>
+      );
+    };
+
     for (let pg = 0; pg < calPages; pg++) {
       const pageItems = calItems.slice(pg * perPage, (pg + 1) * perPage);
       const pageLabel = calPages > 1 ? ` (${pg + 1}/${calPages})` : '';
-      all.push({ id: `dt-calendario-${pg}`, section: 'diretrizes_tecnicas', render: () => (
-        <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 56, overflow: 'hidden' }}>
-          <div style={{ marginBottom: f(20), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>📅 Calendário 30 Dias{pageLabel}</div>
-          <div style={{ display: 'flex', flexDirection: isP ? 'column' : 'row', gap: f(20), flex: 1, overflow: 'hidden' }}>
-            {pageItems.map((item, i) => {
-              const globalIdx = pg * perPage + i;
-              const cols = [C.primary, C.green, C.yellow];
-              const col  = cols[globalIdx % cols.length];
-              return (
-                <div key={i} style={{ flex: 1, borderRadius: 20, padding: f(22), display: 'flex', flexDirection: 'column', gap: f(10), background: `${col}0c`, border: `1px solid ${col}33`, overflow: 'hidden' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: f(10) }}>
-                    <div style={{ borderRadius: 10, padding: `${f(6)}px ${f(12)}px`, background: col, fontFamily: 'Montserrat', fontWeight: 900, fontSize: f(16), color: C.secondary }}>Dia {String(item.dia)}</div>
-                    <div style={{ fontFamily: 'Roboto', fontSize: f(12), color: 'rgba(255,255,255,0.5)' }}>{String(item.dia_semana)}</div>
-                    <Tag text={String(item.formato)} color={col} f={f} />
-                  </div>
-                  <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(15), color: C.white, lineHeight: lh }}>{String(item.tema)}</div>
-                  <div style={{ fontFamily: 'Roboto', fontSize: f(12), color: col, lineHeight: lh }}>🎣 {String(item.gancho_3s)}</div>
-                  <p style={{ fontFamily: 'Roboto', fontSize: f(11), color: 'rgba(255,255,255,0.65)', lineHeight: lh, margin: 0, flex: 1 }}>{String(item.estrutura_resumida)}</p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: f(6) }}>
-                    <div style={{ padding: `${f(6)}px ${f(10)}px`, borderRadius: 8, background: 'rgba(0,0,0,0.2)' }}>
-                      <span style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.4)' }}>CTA: </span>
-                      <span style={{ fontFamily: 'Roboto', fontSize: f(11), color: C.white }}>{String(item.cta)}</span>
-                    </div>
-                    <Tag text={String(item.pilar)} color={col} f={f} />
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(4) }}>
-                      {(Array.isArray(item.hashtags) ? item.hashtags as string[] : String(item.hashtags || '').split(' ')).filter(Boolean).map((h: string) => (
-                        <span key={h} style={{ fontFamily: 'Roboto', fontSize: f(9), color: 'rgba(255,255,255,0.35)' }}>{h}</span>
-                      ))}
-                    </div>
-                    <div style={{ fontFamily: 'Roboto', fontSize: f(10), color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 1 }}>🎯 {String(item.objetivo)}</div>
-                  </div>
-                </div>
-              );
-            })}
+      const pgCopy = pg;
+      all.push({
+        id: `dt-calendario-${pg}`,
+        section: 'diretrizes_tecnicas',
+        render: () => (
+          <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 56, overflow: 'hidden' }}>
+            <div style={{ marginBottom: f(20), fontFamily: 'Montserrat', fontWeight: 900, fontSize: 36, color: C.white, textTransform: 'uppercase' }}>📅 Calendário 30 Dias{pageLabel}</div>
+            <div style={{ display: 'flex', flexDirection: isP ? 'column' : 'row', gap: f(20), flex: 1, overflow: 'hidden' }}>
+              {pageItems.map((item, i) => renderCalCard(item, pgCopy * perPage + i, false))}
+            </div>
           </div>
-        </div>
-      )});
+        ),
+        renderPrint: () => (
+          <div style={{ width: '100%', height: '100%', background: C.secondary, display: 'flex', flexDirection: 'column', padding: 48, overflow: 'hidden' }}>
+            <div style={{ marginBottom: 16, fontFamily: 'Montserrat', fontWeight: 900, fontSize: 32, color: C.white, textTransform: 'uppercase' }}>📅 Calendário 30 Dias{pageLabel}</div>
+            <div style={{ display: 'flex', gap: 16, flex: 1, overflow: 'hidden' }}>
+              {pageItems.map((item, i) => renderCalCard(item, pgCopy * perPage + i, true))}
+            </div>
+          </div>
+        ),
+      });
     }
 
     // Slide final — encerramento + próximos passos
@@ -2044,7 +2204,7 @@ export default function App() {
     <div id="__print_pages__">
       {slides.map((s) => (
         <div key={s.id} className="pp">
-          <div className="ppi">{s.render()}</div>
+          <div className="ppi">{s.renderPrint ? s.renderPrint() : s.render()}</div>
         </div>
       ))}
     </div>
