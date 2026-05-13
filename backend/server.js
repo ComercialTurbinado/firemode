@@ -995,27 +995,21 @@ function ytdlpGetUrl(url) {
 }
 
 /**
- * Baixa apenas o áudio do vídeo em mp3 (máx 25 MB para Whisper).
- * Usa yt-dlp -x para extrair áudio sem baixar o vídeo completo.
- * Retorna o caminho do arquivo temporário gerado.
+ * Extrai áudio de uma URL de vídeo direta (CDN) usando ffmpeg.
+ * Muito mais confiável que yt-dlp -x para CDN URLs (Instagram, TikTok, etc.)
+ * Retorna o caminho do arquivo mp3 temporário gerado.
  */
-function ytdlpDownloadAudio(url) {
+function ffmpegExtractAudio(cdnUrl) {
   return new Promise((resolve, reject) => {
-    const ytdlp      = process.env.YTDLP_PATH || 'yt-dlp';
-    const cookiesArg = process.env.YTDLP_COOKIES_FILE
-      ? `--cookies "${process.env.YTDLP_COOKIES_FILE}"`
-      : '';
+    const tmpPath = path.join(os.tmpdir(), `radar_audio_${Date.now()}_${Math.random().toString(36).slice(2)}.mp3`);
 
-    // Arquivo temporário único por requisição
-    const tmpPath = path.join(os.tmpdir(), `radar_audio_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+    // ffmpeg lê o stream direto da URL CDN, extrai só o áudio, converte para mp3 mono 16kHz
+    // -ss 0 -t 180 limita a 3 min por segurança; -vn ignora a faixa de vídeo
+    const cmd = `ffmpeg -y -i "${cdnUrl}" -vn -ar 16000 -ac 1 -b:a 64k -t 180 "${tmpPath}"`;
 
-    // -x extrai só o áudio; --audio-format mp3 converte via ffmpeg
-    // --audio-quality 5 = qualidade média (bom para transcrição, arquivo menor)
-    const cmd = `${ytdlp} --no-playlist --no-warnings ${cookiesArg} -x --audio-format mp3 --audio-quality 5 -o "${tmpPath}.%(ext)s" "${url}"`;
-
-    exec(cmd, { timeout: 60000 }, (err, stdout, stderr) => {
+    exec(cmd, { timeout: 90000 }, (err, stdout, stderr) => {
       if (err) return reject(new Error(stderr || err.message));
-      resolve(`${tmpPath}.mp3`);
+      resolve(tmpPath);
     });
   });
 }
@@ -1087,16 +1081,16 @@ app.post('/api/video-info', async (req, res) => {
     }
 
     // 4. Transcrição via Whisper (opcional — só quando transcribe: true)
+    // Usa ffmpeg direto no CDN URL para evitar bloqueios do Instagram no yt-dlp
     let transcricao = '';
-    if (transcribe) {
+    if (transcribe && link_download) {
       try {
-        console.log('[video-info] Baixando áudio para transcrição...');
-        const audioFile = await ytdlpDownloadAudio(url);
+        console.log('[video-info] Extraindo áudio via ffmpeg do CDN URL...');
+        const audioFile = await ffmpegExtractAudio(link_download);
         console.log('[video-info] Transcrevendo com Whisper...');
         transcricao = await transcreveAudio(audioFile);
         console.log(`[video-info] Transcrição ok (${transcricao.length} chars)`);
       } catch (e) {
-        // Transcrição falhou — continua sem ela, não bloqueia o fluxo
         console.warn('[video-info] Transcrição falhou, seguindo sem ela:', e.message);
         transcricao = '';
       }
