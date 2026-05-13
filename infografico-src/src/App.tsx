@@ -1714,9 +1714,6 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
             <div style={{ borderRadius: 12, padding: f(14), background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <div style={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: f(12), color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', marginBottom: f(6) }}>👔 Vestimenta / Aparições</div>
               <p style={{ fontFamily: 'Roboto', fontSize: f(11), color: 'rgba(255,255,255,0.75)', lineHeight: lh, margin: `0 0 ${f(8)}px` }}>{dt.identidade_visual.vestimenta_aparicoes.diretrizes}</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(5), marginBottom: f(6) }}>
-                {dt.identidade_visual.vestimenta_aparicoes.mood_referencias?.map((m) => { const handle = m.split(' — ')[0].trim(); return <Tag key={m} text={handle} color={C.green} f={f} />; })}
-              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(5) }}>
                 {dt.identidade_visual.vestimenta_aparicoes.evitar?.map((e) => (
                   <span key={e} style={{ padding: `${f(3)}px ${f(8)}px`, borderRadius: 4, fontSize: f(10), background: 'rgba(255,60,60,0.08)', color: '#ff5555', border: '1px solid rgba(255,60,60,0.18)', textDecoration: 'line-through', fontFamily: 'Roboto' }}>{e}</span>
@@ -1775,12 +1772,6 @@ function buildSlides(section: Section, f: Fscale, isP: boolean) {
           </div>
           <div style={{ padding: f(20), borderRadius: 16, flex: 1, background: 'rgba(0,179,126,0.07)', border: '1px solid rgba(0,179,126,0.22)' }}>
             <p style={{ fontFamily: 'Roboto', fontSize: f(14), color: 'rgba(255,255,255,0.85)', lineHeight: lh, margin: 0 }}>{dt.briefing_designers}</p>
-          </div>
-          <div style={{ marginTop: f(16) }}>
-            <div style={{ fontFamily: 'Roboto', fontSize: f(11), color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: 2, marginBottom: f(8) }}>Mood Visual</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: f(6) }}>
-              {dt.identidade_visual.vestimenta_aparicoes.mood_referencias?.map((m) => <Tag key={m} text={m} color={C.green} f={f} />)}
-            </div>
           </div>
         </div>
       </div>
