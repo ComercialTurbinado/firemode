@@ -942,56 +942,56 @@ app.post('/api/lp/analyze', async (req, res) => {
 // ═════════════════════════════════════════════════════════════════════════════
 
 /**
- * Executa yt-dlp e retorna o JSON de metadados do vídeo.
- * Usa --no-playlist para não baixar playlists inteiras.
- * Usa --cookies-from-browser ou arquivo de cookies se configurado.
+ * Busca metadados e URL de download via RapidAPI (social-download-all-in-one).
+ * Suporta Instagram, TikTok, YouTube, Twitter/X sem bloqueio de IP.
+ * Retorna: { title, duration, thumbnail, medias[], source }
  */
-function ytdlpInfo(url) {
-  return new Promise((resolve, reject) => {
-    // Tenta yt-dlp; fallback para yt-dlp-nox em alguns servidores
-    const ytdlp = process.env.YTDLP_PATH || 'yt-dlp';
+async function rapidapiVideoInfo(url) {
+  const RAPIDAPI_KEY  = process.env.RAPIDAPI_KEY || '0127634a29msh4a303edef58f6dbp1430c6jsnd00af7a6bc1e';
+  const RAPIDAPI_HOST = 'social-download-all-in-one.p.rapidapi.com';
 
-    // Opcional: suporte a cookies do Instagram para evitar bloqueio
-    const cookiesArg = process.env.YTDLP_COOKIES_FILE
-      ? `--cookies "${process.env.YTDLP_COOKIES_FILE}"`
-      : '';
+  const resp = await axios.post(
+    `https://${RAPIDAPI_HOST}/v1/social/autolink`,
+    { url },
+    {
+      headers: {
+        'X-Rapidapi-Key':  RAPIDAPI_KEY,
+        'X-Rapidapi-Host': RAPIDAPI_HOST,
+        'Content-Type':    'application/json',
+      },
+      timeout: 20000,
+    }
+  );
 
-    const cmd = `${ytdlp} --no-playlist --dump-json --no-warnings ${cookiesArg} "${url}"`;
+  const data = resp.data;
+  if (!data || data.message === 'Too many requests') {
+    throw new Error('RapidAPI rate limit atingido. Tente novamente em alguns segundos.');
+  }
+  if (!data.medias || data.medias.length === 0) {
+    throw new Error('Nenhuma mídia encontrada para esse link.');
+  }
 
-    exec(cmd, { timeout: 30000, maxBuffer: 4 * 1024 * 1024 }, (err, stdout, stderr) => {
-      if (err) return reject(new Error(stderr || err.message));
-      try {
-        // stdout pode conter múltiplas linhas JSON (playlist) — pega apenas a primeira
-        const firstLine = stdout.trim().split('\n')[0];
-        resolve(JSON.parse(firstLine));
-      } catch (e) {
-        reject(new Error('Resposta inválida do yt-dlp: ' + stdout.slice(0, 200)));
-      }
-    });
-  });
+  return data;
 }
 
 /**
- * Obtém a URL de download direta (melhor formato ≤ 480p para economizar banda/Whisper).
+ * Seleciona a melhor URL de download para extração de áudio.
+ * Prioridade: áudio puro → menor vídeo com áudio → qualquer mídia.
  */
-function ytdlpGetUrl(url) {
-  return new Promise((resolve, reject) => {
-    const ytdlp = process.env.YTDLP_PATH || 'yt-dlp';
-    const cookiesArg = process.env.YTDLP_COOKIES_FILE
-      ? `--cookies "${process.env.YTDLP_COOKIES_FILE}"`
-      : '';
+function selecionarUrlAudio(medias) {
+  // 1. Áudio puro (is_audio: true)
+  const audioOnly = medias.find(m => m.is_audio === true && m.url);
+  if (audioOnly) return audioOnly.url;
 
-    // Formato: melhor vídeo+áudio até 480p, prefer mp4
-    const formatArg = '-f "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=480]+bestaudio/best[height<=480]/best"';
-    const cmd = `${ytdlp} --no-playlist --no-warnings ${cookiesArg} ${formatArg} -g "${url}"`;
+  // 2. Menor vídeo que tenha áudio (audioQuality não nulo)
+  const comAudio = medias
+    .filter(m => m.url && m.audioQuality && m.type === 'video')
+    .sort((a, b) => (a.width || 9999) - (b.width || 9999));
+  if (comAudio.length > 0) return comAudio[0].url;
 
-    exec(cmd, { timeout: 30000 }, (err, stdout, stderr) => {
-      if (err) return reject(new Error(stderr || err.message));
-      // -g pode retornar múltiplas URLs (vídeo + áudio separados); pega a primeira
-      const firstUrl = stdout.trim().split('\n')[0];
-      resolve(firstUrl);
-    });
-  });
+  // 3. Qualquer URL disponível
+  const qualquer = medias.find(m => m.url);
+  return qualquer ? qualquer.url : null;
 }
 
 /**
@@ -1042,12 +1042,12 @@ app.post('/api/video-info', async (req, res) => {
   const MAX_DURACAO = parseInt(process.env.VIDEO_MAX_SECONDS || '120', 10);
 
   try {
-    // 1. Busca metadados via yt-dlp
+    // 1. Busca metadados e links via RapidAPI
     let info;
     try {
-      info = await ytdlpInfo(url);
+      info = await rapidapiVideoInfo(url);
     } catch (e) {
-      console.error('[video-info] yt-dlp info error:', e.message);
+      console.error('[video-info] RapidAPI error:', e.message);
       return res.status(422).json({
         ok: false,
         motivo: 'erro_extracao',
@@ -1056,7 +1056,7 @@ app.post('/api/video-info', async (req, res) => {
     }
 
     const duracao_segundos = Math.round(info.duration || 0);
-    const titulo           = info.title       || info.fulltitle || '';
+    const titulo           = info.title || '';
     const legenda          = info.description || '';
 
     // 2. Verifica duração máxima permitida
@@ -1070,22 +1070,14 @@ app.post('/api/video-info', async (req, res) => {
       });
     }
 
-    // 3. Obtém URL de download direto
-    let link_download = '';
-    try {
-      link_download = await ytdlpGetUrl(url);
-    } catch (e) {
-      // Se falhar em obter URL direta, tenta usar a thumbnail/URL alternativa do info
-      console.warn('[video-info] Não foi possível obter URL de download:', e.message);
-      link_download = info.url || info.webpage_url || url;
-    }
+    // 3. Seleciona melhor URL de download (áudio puro > menor vídeo com áudio)
+    const link_download = selecionarUrlAudio(info.medias || []) || url;
 
     // 4. Transcrição via Whisper (opcional — só quando transcribe: true)
-    // Usa ffmpeg direto no CDN URL para evitar bloqueios do Instagram no yt-dlp
     let transcricao = '';
     if (transcribe && link_download) {
       try {
-        console.log('[video-info] Extraindo áudio via ffmpeg do CDN URL...');
+        console.log('[video-info] Extraindo áudio via ffmpeg...');
         const audioFile = await ffmpegExtractAudio(link_download);
         console.log('[video-info] Transcrevendo com Whisper...');
         transcricao = await transcreveAudio(audioFile);
@@ -1159,4 +1151,38 @@ app.post('/api/webhook/pagamento', express.raw({ type: 'application/json' }), as
 // ═════════════════════════════════════════════════════════════════════════════
 
 const PORT = process.env.PORT || 3000;
+// ═════════════════════════════════════════════════════════════════════════════
+// 10. UPLOAD DE COOKIES — salva arquivo cookies.txt para uso do yt-dlp
+//
+//  POST /api/upload-cookies
+//  x-api-key: <API_SECRET>
+//  Content-Type: text/plain  (cole o conteúdo do cookies.txt no body)
+//
+//  Salva em /app/cookies.txt e define YTDLP_COOKIES_FILE automaticamente.
+// ═════════════════════════════════════════════════════════════════════════════
+app.post('/api/upload-cookies', (req, res) => {
+  if (req.headers['x-api-key'] !== process.env.API_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const cookiesPath = '/app/cookies.txt';
+  let body = '';
+
+  req.on('data', chunk => { body += chunk.toString(); });
+  req.on('end', () => {
+    if (!body.trim() || !body.includes('Netscape HTTP Cookie File')) {
+      return res.status(400).json({ ok: false, erro: 'Arquivo inválido. Exporte no formato Netscape (cookies.txt).' });
+    }
+    try {
+      fs.writeFileSync(cookiesPath, body, 'utf8');
+      process.env.YTDLP_COOKIES_FILE = cookiesPath;
+      const linhas = body.split('\n').filter(l => l.trim() && !l.startsWith('#')).length;
+      console.log(`[cookies] Salvo ${linhas} cookies em ${cookiesPath}`);
+      res.json({ ok: true, path: cookiesPath, cookies: linhas });
+    } catch (e) {
+      res.status(500).json({ ok: false, erro: e.message });
+    }
+  });
+});
+
 app.listen(PORT, () => console.log(`\n🚀 Auditoria IA Backend rodando em http://localhost:${PORT}\n`));
