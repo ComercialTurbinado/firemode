@@ -1100,6 +1100,56 @@ app.post('/api/video-info', async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
+// 10b. TRANSCRIÇÃO — baixa URL de áudio CDN e transcreve via Whisper
+//
+//  POST /api/transcribe
+//  x-api-key: <API_SECRET>
+//  Body JSON: { link_audio: "https://...", idioma: "pt" }
+//
+//  Retorna: { ok, transcricao, chars, duracao_ms }
+// ═════════════════════════════════════════════════════════════════════════════
+app.post('/api/transcribe', async (req, res) => {
+  const { link_audio, idioma = 'pt' } = req.body || {};
+
+  if (!link_audio) {
+    return res.status(400).json({ ok: false, motivo: 'link_audio ausente' });
+  }
+
+  const t0 = Date.now();
+  let tmpPath;
+
+  try {
+    // 1. Baixa e converte para mp3 mono 16kHz via ffmpeg
+    tmpPath = await ffmpegExtractAudio(link_audio);
+
+    // 2. Transcreve via Whisper (apaga o arquivo ao final)
+    const transcricao = await transcreveAudio(tmpPath);
+    tmpPath = null; // já foi apagado dentro de transcreveAudio
+
+    const duracao_ms = Date.now() - t0;
+    console.log(`[transcribe] ${link_audio.slice(0, 60)}... → ${transcricao.length} chars em ${duracao_ms}ms`);
+
+    return res.json({
+      ok: true,
+      transcricao,
+      chars:       transcricao.length,
+      duracao_ms,
+    });
+
+  } catch (err) {
+    // Garante limpeza se transcreveAudio não apagou
+    if (tmpPath) try { fs.unlinkSync(tmpPath); } catch (_) {}
+
+    console.error('[transcribe] Erro:', err.message);
+    return res.status(500).json({
+      ok:     false,
+      motivo: 'erro_transcricao',
+      detalhe: err.message.slice(0, 300),
+    });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
 // 7. WEBHOOK — CONFIRMAÇÃO DE PAGAMENTO (Stripe/Kiwify)
 // ═════════════════════════════════════════════════════════════════════════════
 
