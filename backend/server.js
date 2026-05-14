@@ -1074,33 +1074,19 @@ app.post('/api/video-info', async (req, res) => {
       });
     }
 
-    // 3. Seleciona melhor URL de download (áudio puro > menor vídeo com áudio)
-    const link_download = selecionarUrlAudio(info.medias || []) || url;
+    // 3. Seleciona URL de áudio puro (ou menor vídeo com áudio) das mídias da RapidAPI
+    const link_audio = selecionarUrlAudio(info.medias || []);
 
-    // 4. Transcrição via Whisper (opcional — só quando transcribe: true)
-    let transcricao = '';
-    if (transcribe && link_download) {
-      try {
-        console.log('[video-info] Extraindo áudio via ffmpeg...');
-        const audioFile = await ffmpegExtractAudio(link_download);
-        console.log('[video-info] Transcrevendo com Whisper...');
-        transcricao = await transcreveAudio(audioFile);
-        console.log(`[video-info] Transcrição ok (${transcricao.length} chars)`);
-      } catch (e) {
-        console.warn('[video-info] Transcrição falhou, seguindo sem ela:', e.message);
-        transcricao = '';
-      }
-    }
-
+    // 4. Retorna metadados + URL de áudio (sem download, sem Whisper)
     return res.json({
-      ok: true,
-      link_download,
+      ok:            true,
+      link_audio,                               // URL direta de áudio puro (pronto para Whisper)
       duracao_segundos,
       titulo,
-      legenda:     legenda.slice(0, 2000),
-      transcricao: transcricao.slice(0, 4000), // limita tokens do Whisper
-      tipo:        tipo || info.extractor_key?.toLowerCase() || 'desconhecido',
-      thumbnail:   info.thumbnail || '',
+      legenda:       (info.description || '').slice(0, 2000),
+      autor:         info.author || info.source || '',
+      tipo:          tipo || info.source || 'desconhecido',
+      thumbnail:     info.thumbnail || '',
     });
 
   } catch (err) {
@@ -1187,6 +1173,97 @@ app.post('/api/upload-cookies', (req, res) => {
       res.status(500).json({ ok: false, erro: e.message });
     }
   });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// 11. PAGE TEXT — abre URL no Chromium e retorna texto do DOM
+//
+//  POST /api/page-text
+//  x-api-key: <API_SECRET>
+//  Body JSON: { url: "https://...", wait_ms: 2000, selector: "article" }
+//
+//  wait_ms    (opcional) — ms para aguardar após load (default 1500)
+//  selector   (opcional) — seletor CSS para extrair texto de elemento específico
+//                          ex: "article", "main", ".content" (default: body)
+//
+//  Retorna: { ok, url, texto, chars, titulo }
+// ═════════════════════════════════════════════════════════════════════════════
+app.post('/api/page-text', async (req, res) => {
+  if (req.headers['x-api-key'] !== process.env.API_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { url, wait_ms = 1500, selector = 'body' } = req.body || {};
+
+  if (!url) return res.status(400).json({ ok: false, erro: 'url obrigatória' });
+
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      executablePath: process.env.CHROME_PATH || '/usr/bin/chromium',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--window-size=1280,800',
+      ],
+      headless: true,
+    });
+
+    const page = await browser.newPage();
+
+    // User-agent de browser real para contornar bloqueios básicos
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+    );
+    await page.setViewport({ width: 1280, height: 800 });
+
+    // Bloqueia imagens, fontes e CSS para carregar mais rápido
+    await page.setRequestInterception(true);
+    page.on('request', req => {
+      if (['image', 'font', 'stylesheet', 'media'].includes(req.resourceType())) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+    // Aguarda conteúdo dinâmico (JS que renderiza após load)
+    if (wait_ms > 0) await new Promise(r => setTimeout(r, Math.min(wait_ms, 5000)));
+
+    // Extrai título e texto do seletor escolhido
+    const { titulo, texto } = await page.evaluate((sel) => {
+      const el = document.querySelector(sel) || document.body;
+      // Remove scripts, styles e elementos ocultos do texto
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('script, style, noscript, [aria-hidden="true"]').forEach(e => e.remove());
+      const texto = (clone.innerText || clone.textContent || '')
+        .replace(/\n{3,}/g, '\n\n')   // colapsa linhas em branco múltiplas
+        .replace(/[ \t]{2,}/g, ' ')   // colapsa espaços múltiplos
+        .trim();
+      return { titulo: document.title || '', texto };
+    }, selector);
+
+    await browser.close();
+
+    console.log(`[page-text] ${url} → ${texto.length} chars`);
+
+    return res.json({
+      ok:    true,
+      url,
+      titulo,
+      texto: texto.slice(0, 50000), // limita a 50k chars (~37k tokens)
+      chars: texto.length,
+    });
+
+  } catch (err) {
+    if (browser) await browser.close().catch(() => {});
+    console.error('[page-text] Erro:', err.message);
+    return res.status(500).json({ ok: false, erro: err.message });
+  }
 });
 
 app.listen(PORT, () => console.log(`\n🚀 Auditoria IA Backend rodando em http://localhost:${PORT}\n`));
