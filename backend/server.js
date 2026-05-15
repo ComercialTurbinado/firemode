@@ -1870,7 +1870,28 @@ app.post('/api/verificar-cliente', async (req, res) => {
       `${SUPA_URL}/rest/v1/creditos_clientes?cliente_handle=eq.${encodeURIComponent(cliente.handle)}&select=saldo_atual,creditos_mes,proximo_reset`,
       { headers: supaHeaders() }
     );
-    const creditos = credRows?.[0] || { saldo_atual: 0, creditos_mes: 0, proximo_reset: null };
+    let creditos = credRows?.[0] || null;
+
+    // Se cliente existe mas não tem carteira ainda → cria com créditos free
+    if (!creditos) {
+      const CREDITOS_FREE = 10;
+      const proximoReset  = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      try {
+        await axios.post(
+          `${SUPA_URL}/rest/v1/creditos_clientes?on_conflict=cliente_handle`,
+          { cliente_handle: cliente.handle, saldo_atual: CREDITOS_FREE, creditos_mes: CREDITOS_FREE, proximo_reset: proximoReset, total_consumido: 0, total_recarregado: 0 },
+          { headers: { ...supaHeaders(), 'Prefer': 'resolution=merge-duplicates,return=minimal' } }
+        );
+        await axios.post(`${SUPA_URL}/rest/v1/transacoes_creditos`,
+          { cliente_handle: cliente.handle, tipo: 'bonus', feature_slug: null, quantidade: CREDITOS_FREE, saldo_apos: CREDITOS_FREE, descricao: 'Bônus de boas-vindas — plano Free' },
+          { headers: supaHeaders() }
+        );
+        creditos = { saldo_atual: CREDITOS_FREE, creditos_mes: CREDITOS_FREE, proximo_reset: proximoReset };
+        console.log(`[verificar-cliente] Carteira criada para cliente antigo @${cliente.handle}`);
+      } catch (e) {
+        creditos = { saldo_atual: 0, creditos_mes: 0, proximo_reset: null };
+      }
+    }
 
     // Busca última análise concluída
     const { data: analises } = await axios.get(
