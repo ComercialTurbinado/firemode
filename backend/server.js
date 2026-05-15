@@ -1754,6 +1754,96 @@ app.post('/api/save-analise', async (req, res) => {
 // ═════════════════════════════════════════════════════════════════════════════
 
 /**
+ * POST /api/cadastrar-cliente
+ * Upsert cliente + cria carteira de créditos free se for novo.
+ * Retorna se era novo ou já existia e quantos créditos foram dados.
+ */
+app.post('/api/cadastrar-cliente', async (req, res) => {
+  const { whatsapp, nome, handle, nicho } = req.body || {};
+  if (!whatsapp || !handle) {
+    return res.status(400).json({ ok: false, motivo: 'whatsapp_e_handle_obrigatorios' });
+  }
+
+  const cleanHandle = handle.replace('@', '').trim().toLowerCase();
+
+  try {
+    // Verifica se já existe
+    const { data: existente } = await axios.get(
+      `${SUPA_URL}/rest/v1/clientes?handle=eq.${encodeURIComponent(cleanHandle)}&select=handle,plano,whatsapp`,
+      { headers: supaHeaders() }
+    );
+    const jaExistia = Array.isArray(existente) && existente.length > 0;
+
+    // Upsert cliente
+    await axios.post(
+      `${SUPA_URL}/rest/v1/clientes?on_conflict=handle`,
+      {
+        handle:        cleanHandle,
+        nome_completo: nome || '',
+        whatsapp,
+        nicho:         nicho || '',
+        plano:         'free',
+        status:        'trial',
+      },
+      { headers: { ...supaHeaders(), 'Prefer': 'resolution=merge-duplicates,return=minimal' } }
+    );
+
+    let creditosDados = 0;
+
+    if (!jaExistia) {
+      // Cria carteira de créditos free (10 créditos, reset em 30 dias)
+      const CREDITOS_FREE = 10;
+      const proximoReset  = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+      await axios.post(
+        `${SUPA_URL}/rest/v1/creditos_clientes?on_conflict=cliente_handle`,
+        {
+          cliente_handle: cleanHandle,
+          saldo_atual:    CREDITOS_FREE,
+          creditos_mes:   CREDITOS_FREE,
+          proximo_reset:  proximoReset,
+          total_consumido: 0,
+          total_recarregado: 0,
+        },
+        { headers: { ...supaHeaders(), 'Prefer': 'resolution=merge-duplicates,return=minimal' } }
+      );
+
+      // Registra transação de bônus
+      await axios.post(
+        `${SUPA_URL}/rest/v1/transacoes_creditos`,
+        {
+          cliente_handle: cleanHandle,
+          tipo:           'bonus',
+          feature_slug:   null,
+          quantidade:     CREDITOS_FREE,
+          saldo_apos:     CREDITOS_FREE,
+          descricao:      'Bônus de boas-vindas — plano Free',
+        },
+        { headers: supaHeaders() }
+      );
+
+      creditosDados = CREDITOS_FREE;
+      console.log(`[cadastrar-cliente] Novo cliente @${cleanHandle} — ${CREDITOS_FREE} créditos free concedidos`);
+    } else {
+      console.log(`[cadastrar-cliente] Cliente @${cleanHandle} já existia — dados atualizados`);
+    }
+
+    return res.json({
+      ok: true,
+      jaExistia,
+      handle: cleanHandle,
+      creditos_dados: creditosDados,
+      mensagem: jaExistia
+        ? `Dados de *@${cleanHandle}* atualizados com sucesso.`
+        : `Cadastro de *@${cleanHandle}* realizado! Você ganhou *${creditosDados} créditos* de boas-vindas para experimentar a plataforma. 🎉`,
+    });
+  } catch (err) {
+    console.error('[cadastrar-cliente]', err.response?.data || err.message);
+    return res.status(500).json({ ok: false, motivo: err.response?.data || err.message });
+  }
+});
+
+/**
  * POST /api/verificar-cliente
  * Verifica se um número WhatsApp está cadastrado.
  * Retorna dados do cliente + saldo de créditos + última análise.
