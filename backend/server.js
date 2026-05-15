@@ -1748,4 +1748,212 @@ app.post('/api/save-analise', async (req, res) => {
   }
 });
 
+
+// ═════════════════════════════════════════════════════════════════════════════
+// AGENTE SOFIA — Endpoints de suporte ao WhatsApp AI Agent
+// ═════════════════════════════════════════════════════════════════════════════
+
+/**
+ * POST /api/verificar-cliente
+ * Verifica se um número WhatsApp está cadastrado.
+ * Retorna dados do cliente + saldo de créditos + última análise.
+ */
+app.post('/api/verificar-cliente', async (req, res) => {
+  const { whatsapp } = req.body || {};
+  if (!whatsapp) return res.status(400).json({ ok: false, motivo: 'whatsapp_obrigatorio' });
+
+  try {
+    // Busca cliente pelo número WhatsApp
+    const { data: clientes } = await axios.get(
+      `${SUPA_URL}/rest/v1/clientes?whatsapp=eq.${encodeURIComponent(whatsapp)}&select=handle,nome_completo,nicho,plano,status,foto_perfil,criado_em`,
+      { headers: supaHeaders() }
+    );
+
+    if (!clientes || clientes.length === 0) {
+      return res.json({ ok: true, encontrado: false, cliente: null, creditos: null, ultima_analise: null });
+    }
+
+    const cliente = clientes[0];
+
+    // Busca saldo de créditos
+    const { data: credRows } = await axios.get(
+      `${SUPA_URL}/rest/v1/creditos_clientes?cliente_handle=eq.${encodeURIComponent(cliente.handle)}&select=saldo_atual,creditos_mes,proximo_reset`,
+      { headers: supaHeaders() }
+    );
+    const creditos = credRows?.[0] || { saldo_atual: 0, creditos_mes: 0, proximo_reset: null };
+
+    // Busca última análise concluída
+    const { data: analises } = await axios.get(
+      `${SUPA_URL}/rest/v1/analises?cliente_handle=eq.${encodeURIComponent(cliente.handle)}&status_auditoria=eq.concluido&order=criado_em.desc&limit=1&select=id,handle_auditado,tipo_auditoria,criado_em`,
+      { headers: supaHeaders() }
+    );
+    const ultima_analise = analises?.[0] || null;
+
+    return res.json({ ok: true, encontrado: true, cliente, creditos, ultima_analise });
+  } catch (err) {
+    console.error('[verificar-cliente]', err.message);
+    return res.status(500).json({ ok: false, motivo: err.message });
+  }
+});
+
+/**
+ * POST /api/historico-analises
+ * Retorna histórico de análises de um cliente (para contexto do agente).
+ */
+app.post('/api/historico-analises', async (req, res) => {
+  const { cliente_handle, limit = 5 } = req.body || {};
+  if (!cliente_handle) return res.status(400).json({ ok: false, motivo: 'cliente_handle_obrigatorio' });
+
+  try {
+    const { data: analises } = await axios.get(
+      `${SUPA_URL}/rest/v1/analises?cliente_handle=eq.${encodeURIComponent(cliente_handle)}&order=criado_em.desc&limit=${limit}&select=id,handle_auditado,tipo_auditoria,status_auditoria,nicho,criado_em`,
+      { headers: supaHeaders() }
+    );
+
+    const { data: solicitacoes } = await axios.get(
+      `${SUPA_URL}/rest/v1/solicitacoes_auditoria?cliente_handle=eq.${encodeURIComponent(cliente_handle)}&status=in.(pendente,processando)&select=id,handle_principal,tipo_auditoria,status,criado_em`,
+      { headers: supaHeaders() }
+    );
+
+    return res.json({ ok: true, analises: analises || [], em_andamento: solicitacoes || [] });
+  } catch (err) {
+    console.error('[historico-analises]', err.message);
+    return res.status(500).json({ ok: false, motivo: err.message });
+  }
+});
+
+/**
+ * POST /api/iniciar-auditoria
+ * Registra uma solicitação de auditoria na fila e aciona o processo.
+ * Suporta: 'proprio' (só perfil do cliente), 'concorrente' (só concorrente), 'misto' (ambos).
+ */
+app.post('/api/iniciar-auditoria', async (req, res) => {
+  const {
+    whatsapp_solicitante,
+    cliente_handle,
+    handle_principal,
+    concorrentes = [],
+    tipo_auditoria = 'misto',
+  } = req.body || {};
+
+  if (!handle_principal || !whatsapp_solicitante) {
+    return res.status(400).json({ ok: false, motivo: 'handle_principal_e_whatsapp_obrigatorios' });
+  }
+
+  // Valida tipo
+  const tiposValidos = ['proprio', 'concorrente', 'misto'];
+  if (!tiposValidos.includes(tipo_auditoria)) {
+    return res.status(400).json({ ok: false, motivo: 'tipo_auditoria_invalido' });
+  }
+
+  try {
+    // Registra na fila
+    const payload = {
+      whatsapp_solicitante,
+      cliente_handle: cliente_handle || null,
+      handle_principal,
+      tipo_auditoria,
+      concorrentes: JSON.stringify(concorrentes),
+      status: 'pendente',
+    };
+
+    const { data: solicitacao } = await axios.post(
+      `${SUPA_URL}/rest/v1/solicitacoes_auditoria`,
+      payload,
+      { headers: { ...supaHeaders(), 'Prefer': 'return=representation' } }
+    );
+
+    const solicitacao_id = solicitacao?.[0]?.id || null;
+
+    // Monta estimativa baseada no tipo
+    const estimativas = {
+      proprio:      '10-15 minutos',
+      concorrente:  '8-12 minutos',
+      misto:        '15-25 minutos',
+    };
+
+    // Aqui você pode adicionar uma chamada ao webhook externo que gera o relatório
+    // Ex: axios.post(process.env.AUDITORIA_WEBHOOK_URL, { solicitacao_id, handle_principal, ... })
+
+    console.log(`[iniciar-auditoria] Solicitação ${solicitacao_id} | tipo=${tipo_auditoria} | handle=${handle_principal} | concorrentes=${concorrentes.join(',')}`);
+
+    return res.json({
+      ok: true,
+      solicitacao_id,
+      handle_principal,
+      concorrentes,
+      tipo_auditoria,
+      estimativa: estimativas[tipo_auditoria],
+      mensagem: `Auditoria iniciada! Vou processar o perfil *@${handle_principal}*${concorrentes.length ? ' e ' + concorrentes.length + ' concorrente(s)' : ''}. Tempo estimado: ${estimativas[tipo_auditoria]}.`,
+    });
+  } catch (err) {
+    console.error('[iniciar-auditoria]', err.response?.data || err.message);
+    return res.status(500).json({ ok: false, motivo: err.response?.data || err.message });
+  }
+});
+
+/**
+ * POST /api/debitar-credito
+ * Debita créditos de um cliente e registra a transação.
+ */
+app.post('/api/debitar-credito', async (req, res) => {
+  const { cliente_handle, feature_slug, descricao } = req.body || {};
+  if (!cliente_handle || !feature_slug) {
+    return res.status(400).json({ ok: false, motivo: 'cliente_handle_e_feature_slug_obrigatorios' });
+  }
+
+  try {
+    // Busca custo da feature
+    const { data: features } = await axios.get(
+      `${SUPA_URL}/rest/v1/features_creditos?slug=eq.${encodeURIComponent(feature_slug)}&select=custo_creditos,nome`,
+      { headers: supaHeaders() }
+    );
+    if (!features || features.length === 0) {
+      return res.status(404).json({ ok: false, motivo: 'feature_nao_encontrada' });
+    }
+    const custo = features[0].custo_creditos;
+
+    // Busca saldo atual
+    const { data: credRows } = await axios.get(
+      `${SUPA_URL}/rest/v1/creditos_clientes?cliente_handle=eq.${encodeURIComponent(cliente_handle)}&select=id,saldo_atual`,
+      { headers: supaHeaders() }
+    );
+    const credito = credRows?.[0];
+    if (!credito) {
+      return res.status(404).json({ ok: false, motivo: 'cliente_sem_carteira_de_creditos' });
+    }
+    if (credito.saldo_atual < custo) {
+      return res.json({ ok: false, motivo: 'saldo_insuficiente', saldo_atual: credito.saldo_atual, custo });
+    }
+
+    const novo_saldo = credito.saldo_atual - custo;
+
+    // Atualiza saldo
+    await axios.patch(
+      `${SUPA_URL}/rest/v1/creditos_clientes?cliente_handle=eq.${encodeURIComponent(cliente_handle)}`,
+      { saldo_atual: novo_saldo, total_consumido: credito.saldo_atual - novo_saldo, atualizado_em: new Date().toISOString() },
+      { headers: supaHeaders() }
+    );
+
+    // Registra transação
+    await axios.post(
+      `${SUPA_URL}/rest/v1/transacoes_creditos`,
+      {
+        cliente_handle,
+        tipo: 'consumo',
+        feature_slug,
+        quantidade: -custo,
+        saldo_apos: novo_saldo,
+        descricao: descricao || `Uso de ${features[0].nome}`,
+      },
+      { headers: supaHeaders() }
+    );
+
+    return res.json({ ok: true, custo, saldo_anterior: credito.saldo_atual, saldo_atual: novo_saldo });
+  } catch (err) {
+    console.error('[debitar-credito]', err.response?.data || err.message);
+    return res.status(500).json({ ok: false, motivo: err.response?.data || err.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`\n🚀 Auditoria IA Backend rodando em http://localhost:${PORT}\n`));
