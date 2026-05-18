@@ -76,69 +76,124 @@ app.post('/api/fetch-instagram', async (req, res) => {
   const { handle } = req.body;
   const cleanHandle = handle.replace('@', '').replace(/.*instagram\.com\//, '').split('/')[0];
 
-  try {
-    // Opção A: Apify Instagram Profile Scraper (recomendado)
-    const apifyRun = await axios.post(
+  // ── helpers ──────────────────────────────────────────────────────────────
+  async function fetchViaApify() {
+    const r = await axios.post(
       `https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=${process.env.APIFY_TOKEN}`,
       { usernames: [cleanHandle] },
       { timeout: 30000 }
     );
+    const p = r.data[0];
+    if (!p || !p.followersCount) throw new Error('apify: no data');
+    return {
+      followers:   p.followersCount || 0,
+      following:   p.followsCount   || 0,
+      posts_count: p.postsCount     || 0,
+      full_name:   p.fullName       || '',
+      biography:   p.biography      || '',
+      verified:    !!(p.verified || p.isVerified),
+      private:     !!(p.private  || p.isPrivate),
+      is_business: !!(p.businessCategory || p.isBusinessAccount),
+      external_url:p.externalUrl   || p.bioLinks?.[0]?.url || '',
+      foto_perfil: p.profilePicUrlHD || p.profilePicUrl || '',
+      posts: (p.latestPosts || []).slice(0, 6).map(x => ({
+        curtidas:   x.likesCount    || 0,
+        comentarios:x.commentsCount || 0,
+        caption:    (x.caption      || '').slice(0, 120),
+      })),
+    };
+  }
 
-    const profile = apifyRun.data[0] || {};
+  async function fetchViaRapidAPI() {
+    const RAPIDAPI_KEY  = process.env.RAPIDAPI_KEY || '0127634a29msh4a303edef58f6dbp1430c6jsnd00af7a6bc1e';
+    const r = await axios.get(
+      `https://instagram-looter2.p.rapidapi.com/profile`,
+      {
+        params:  { username: cleanHandle },
+        headers: { 'X-RapidAPI-Key': RAPIDAPI_KEY, 'X-RapidAPI-Host': 'instagram-looter2.p.rapidapi.com' },
+        timeout: 20000,
+      }
+    );
+    const p = r.data;
+    if (!p || p.status === false) throw new Error('rapidapi: no data');
+    const followers    = p.edge_followed_by?.count || 0;
+    const following    = p.edge_follow?.count       || 0;
+    const posts_nodes  = p.edge_owner_to_timeline_media?.edges || [];
+    const posts        = posts_nodes.slice(0, 6).map(e => ({
+      curtidas:    e.node?.edge_liked_by?.count       || e.node?.edge_media_preview_like?.count || 0,
+      comentarios: e.node?.edge_media_to_comment?.count || 0,
+      caption:     (e.node?.edge_media_to_caption?.edges?.[0]?.node?.text || '').slice(0, 120),
+    }));
+    return {
+      followers,
+      following,
+      posts_count: p.edge_owner_to_timeline_media?.count || 0,
+      full_name:   p.full_name    || '',
+      biography:   p.biography    || '',
+      verified:    !!(p.is_verified),
+      private:     !!(p.is_private),
+      is_business: !!(p.is_business_account),
+      external_url:p.external_url || '',
+      foto_perfil: p.profile_pic_url_hd || p.profile_pic_url || '',
+      posts,
+    };
+  }
 
-    const followers        = profile.followersCount || 0;
-    const posts            = profile.latestPosts     || [];
-    const avgLikes         = posts.length
-      ? Math.round(posts.reduce((s, p) => s + (p.likesCount || 0), 0) / posts.length)
-      : 0;
-    const avgComments      = posts.length
-      ? Math.round(posts.reduce((s, p) => s + (p.commentsCount || 0), 0) / posts.length)
-      : 0;
+  try {
+    // Tenta Apify primeiro, cai no RapidAPI se falhar
+    let profile;
+    try {
+      profile = await fetchViaApify();
+      console.log('[fetch-instagram] via Apify:', cleanHandle);
+    } catch (apifyErr) {
+      console.warn('[fetch-instagram] Apify falhou, usando RapidAPI:', apifyErr.message);
+      profile = await fetchViaRapidAPI();
+      console.log('[fetch-instagram] via RapidAPI:', cleanHandle);
+    }
+
+    const { followers, following, posts_count, full_name, biography,
+            verified, private: is_private, is_business, external_url,
+            foto_perfil, posts } = profile;
+
+    const avgLikes    = posts.length ? Math.round(posts.reduce((s,p) => s + p.curtidas,    0) / posts.length) : 0;
+    const avgComments = posts.length ? Math.round(posts.reduce((s,p) => s + p.comentarios, 0) / posts.length) : 0;
     const taxa_engajamento = followers > 0
       ? (((avgLikes + avgComments) / followers) * 100).toFixed(2)
       : '0.00';
 
-    // Detectar nicho via GPT-4o mini (barato e rápido)
+    // Detectar nicho via GPT-4o mini
     const nichoRes = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        {
-          role: 'system',
-          content: 'Classifique o nicho do perfil em UMA palavra em português. Exemplos: restaurante, coach, ecommerce, academia, clínica, barbearia, infoprodutor, moda, pet, imóveis. Responda apenas a palavra.',
-        },
-        {
-          role: 'user',
-          content: `Bio: ${profile.biography || ''}\nÚltimas legendas: ${posts.slice(0, 5).map(p => p.caption?.slice(0, 80)).join(' | ')}`,
-        },
+        { role: 'system', content: 'Classifique o nicho do perfil em UMA palavra em português. Exemplos: restaurante, coach, ecommerce, academia, clínica, barbearia, infoprodutor, moda, pet, imóveis. Responda apenas a palavra.' },
+        { role: 'user',   content: `Bio: ${biography}\nÚltimas legendas: ${posts.slice(0,5).map(p=>p.caption).join(' | ')}` },
       ],
       max_tokens: 10,
     });
-
     const nicho = nichoRes.choices[0].message.content.trim().toLowerCase();
 
     return res.json({
       ok:              true,
       handle:          cleanHandle,
       nicho,
-      full_name:       profile.fullName        || '',
-      biografia:       profile.biography        || '',
+      full_name,
+      biografia:       biography,
       seguidores:      followers,
-      seguindo:        profile.followsCount     || 0,
-      qtd_posts:       profile.postsCount       || 0,
-      is_verificado:   !!(profile.verified      || profile.isVerified),
-      is_privado:      !!(profile.private       || profile.isPrivate),
-      is_business:     !!(profile.businessCategory || profile.isBusinessAccount),
-      has_website:     !!(profile.externalUrl   || profile.bioLinks?.[0]),
-      site_externo:    profile.externalUrl      || profile.bioLinks?.[0]?.url || '',
-      foto_perfil:     profile.profilePicUrlHD  || profile.profilePicUrl || '',
+      seguindo:        following,
+      qtd_posts:       posts_count,
+      is_verificado:   verified,
+      is_privado:      is_private,
+      is_business,
+      has_website:     !!external_url,
+      site_externo:    external_url,
+      foto_perfil,
       taxa_engajamento,
       avg_likes:       avgLikes,
       avg_comments:    avgComments,
       ultimos_posts:   posts.slice(0, 3).map(p => ({
-        tipo:          p.type           || 'foto',
-        curtidas:      p.likesCount     || 0,
-        comentarios:   p.commentsCount  || 0,
-        legenda_preview: (p.caption     || '').slice(0, 120),
+        curtidas:        p.curtidas,
+        comentarios:     p.comentarios,
+        legenda_preview: p.caption,
       })),
     });
 
