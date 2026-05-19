@@ -735,6 +735,63 @@
       .guarantee-strip-link { margin-top: 0; }
     }
 
+    /* ── GUARANTEE HERO ── */
+    .guarantee-hero {
+      margin-top: 64px;
+      padding: 64px 60px;
+      background: rgba(37,211,102,0.04);
+      border: 1.5px solid rgba(37,211,102,0.22);
+      border-radius: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .guarantee-hero::before {
+      content: '';
+      position: absolute; top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 500px; height: 400px;
+      background: radial-gradient(circle, rgba(37,211,102,0.07) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .guarantee-hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.28);
+      color: #25D366; font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .guarantee-hero-badge svg { width: 13px; height: 13px; stroke: #25D366; flex-shrink: 0; }
+    .guarantee-hero-days {
+      font-size: clamp(80px, 14vw, 120px);
+      font-weight: 900; color: #25D366;
+      line-height: 1; letter-spacing: -0.04em;
+      margin-bottom: 6px;
+    }
+    .guarantee-hero-label {
+      font-size: clamp(20px, 3vw, 26px); font-weight: 700; color: var(--text);
+      margin-bottom: 24px; letter-spacing: -0.01em;
+    }
+    .guarantee-hero-body {
+      font-size: 16px; color: var(--text-muted); max-width: 600px;
+      margin: 0 auto 32px; line-height: 1.75;
+    }
+    .guarantee-hero-body strong { color: var(--text); }
+    .guarantee-hero-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 14px; font-weight: 600; color: #25D366;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(37,211,102,0.35);
+      padding-bottom: 2px;
+      transition: gap .15s, border-color .15s;
+    }
+    .guarantee-hero-link:hover { gap: 10px; border-color: #25D366; }
+    .guarantee-hero-link svg { width: 13px; height: 13px; stroke: #25D366; }
+    @media (max-width: 680px) {
+      .guarantee-hero { padding: 48px 24px; }
+      .guarantee-hero-days { font-size: 88px; }
+    }
+
     /* ── TRUST ── */
     #trust { padding: 56px 0; }
     .trust-box {
@@ -1358,21 +1415,6 @@
     <h2 class="section-title" style="margin-top:20px; text-align:center;">Escolha seu nível de <span class="highlight">inteligência</span></h2>
     <p class="section-sub" style="text-align:center; margin:0 auto;">Três planos desenhados para cada estágio da sua ambição. Sem mensalidades surpresa, sem contratos longos.</p>
 
-    <!-- GUARANTEE STRIP -->
-    <div class="guarantee-strip reveal-item">
-      <div class="guarantee-strip-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-      </div>
-      <div class="guarantee-strip-body">
-        <div class="guarantee-strip-title">Garantia de 30 dias — sem pegadinha, sem letra miúda</div>
-        <div class="guarantee-strip-sub">Siga 100% do nosso protocolo: grave os vídeos, publique os posts, respeite o padrão de qualidade. Se em 30 dias não tiver nenhuma melhora mensurável de alcance, <strong>devolvemos 100% do seu dinheiro.</strong> É claro, é direto, é isso.</div>
-      </div>
-      <a href="/protocolo-de-performance.html" class="guarantee-strip-link" target="_blank">
-        Ver o protocolo completo
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
-
     <div class="pricing-grid">
 
       <!-- DIAGNOSTIC -->
@@ -1447,6 +1489,24 @@
       </div>
 
     </div>
+
+    <!-- GUARANTEE HERO -->
+    <div class="guarantee-hero reveal-item">
+      <div class="guarantee-hero-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        Garantia sem letra miúda
+      </div>
+      <div class="guarantee-hero-days">30</div>
+      <div class="guarantee-hero-label">dias de garantia total</div>
+      <p class="guarantee-hero-body">
+        Aplique os roteiros, siga o plano semanal, publique os conteúdos. Se em 30 dias não tiver nenhuma melhora mensurável de alcance, <strong>devolvemos 100% do seu dinheiro</strong> — sem burocracia, sem perguntas, sem precisar justificar nada.
+      </p>
+      <a href="/protocolo-de-performance.html" class="guarantee-hero-link" target="_blank">
+        Ver o protocolo completo
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
   </div>
 </section>
 
@@ -1579,7 +1639,7 @@
           <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
         </button>
         <div class="faq-a">
-          Nenhuma inteligência séria garante resultados sem a execução do cliente. O Signal entrega o diagnóstico preciso e o plano de guerra pronto, mas o resultado final depende da sua consistência em gravar e publicar. O que garantimos é que você parará de quebrar a cabeça com o que postar e passará a usar o que o mercado já validou como lucrativo.
+          Nenhuma inteligência séria garante resultados sem a execução do cliente. O Signal entrega o diagnóstico preciso e os roteiros prontos, mas o resultado final depende da sua consistência em publicar e seguir o plano. O que garantimos é que você parará de quebrar a cabeça com o que postar e passará a usar o que o mercado já validou como lucrativo.
         </div>
       </div>
 
@@ -1599,7 +1659,7 @@
           <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
         </button>
         <div class="faq-a">
-          O <strong>Signal Pro (R$ 797/mês)</strong> entrega inteligência semanal: roteiros toda semana, benchmark de 2 concorrentes e Alerta de Concorrente em tempo real. A munição chega toda semana — você só grava e publica.<br><br>
+          O <strong>Signal Pro (R$ 797/mês)</strong> entrega inteligência semanal: roteiros toda semana, benchmark de 2 concorrentes e Alerta de Concorrente em tempo real. A munição chega toda semana — você só aplica e publica.<br><br>
           O <strong>Signal Elite (R$ 1.497/mês)</strong> adiciona o Canal VIP (análise instantânea de qualquer vídeo), Briefing por Voz e a biblioteca acumulada do seu nicho. A diferença real: no Pro você <em>recebe</em> inteligência. No Elite você <em>comanda</em> a inteligência — no momento em que precisar, não quando a entrega semanal chegar.
         </div>
       </div>
@@ -1620,7 +1680,7 @@
           <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
         </button>
         <div class="faq-a">
-          Para os dois — mas de formas diferentes. Quem está começando usa o <strong>Signal Diagnostic</strong> para não errar o posicionamento desde o início e já sair com 20 roteiros prontos. Quem já fatura usa o <strong>Signal Pro ou Elite</strong> para escalar sem depender de agência cara ou de equipe grande. O denominador comum é que você precisa levar o Instagram a sério como canal de aquisição de clientes.
+          Para os dois — mas de formas diferentes. Quem está começando usa o <strong>Signal Diagnostic</strong> para entender o mercado desde o início e já sair com 20 roteiros prontos baseados em dados reais. Quem já fatura usa o <strong>Signal Pro ou Elite</strong> para escalar com inteligência contínua, sem depender de agência cara ou de equipe grande. O denominador comum é levar o Instagram a sério como canal de aquisição.
         </div>
       </div>
 
@@ -1646,7 +1706,7 @@
       Chega de postar no<br><span class="highlight">escuro.</span>
     </h2>
     <p class="section-sub">
-      Enquanto você lê isso, seus concorrentes estão interpretando sinais que você ainda ignora. O Signal traduz esses sinais em conteúdo pronto — hoje, via <strong>WhatsApp</strong>.
+      Enquanto você lê isso, seus concorrentes estão interpretando sinais que você ainda ignora. O Signal traduz esses sinais em roteiros prontos e estratégia real — hoje, via <strong>WhatsApp</strong>.
     </p>
 
     <button onclick="openLeadModal()" class="btn btn-wpp" style="margin-bottom:16px; border:none; cursor:pointer;">
@@ -1848,7 +1908,7 @@
       ],
       'cta.tag': 'Último passo',
       'cta.title': 'Chega de postar no<br><span class="highlight">escuro.</span>',
-      'cta.sub': 'Enquanto você lê isso, seus concorrentes estão interpretando sinais que você ainda ignora. O Signal traduz esses sinais em conteúdo pronto — hoje, via <strong>WhatsApp</strong>.',
+      'cta.sub': 'Enquanto você lê isso, seus concorrentes estão interpretando sinais que você ainda ignora. O Signal traduz esses sinais em roteiros prontos e estratégia real — hoje, via <strong>WhatsApp</strong>.',
       'cta.btn': 'FALAR COM O SIGNAL AGORA',
       'cta.note': 'Resposta em até 2h em dias úteis · Sem compromisso inicial',
       'trust.tag': 'Segurança & Transparência',
@@ -1864,7 +1924,7 @@
       'hero.titleMain': 'Stop posting<br>in the <span class="highlight">dark.</span>',
       'hero.titleReveal': 'Spy on leaders,<br>dissect what goes viral.',
       'hero.tagline': 'We read the market. You just publish.',
-      'hero.sub': 'You have metrics, but no one interprets them for you. Every 7 days, Firemode Signal delivers a report on what\'s working in your market, what your competitors do differently, a ready-to-post content plan, and alerts when a relevant viral appears. You read, record, post. <strong>We do the rest.</strong>',
+      'hero.sub': 'You have metrics, but no one interprets them for you. Every 7 days, Firemode Signal delivers a report on what\'s working in your market, what your competitors do differently, ready-to-use scripts and real-time competitor alerts. You read, apply, publish. <strong>We handle the intelligence.</strong>',
       'hero.cta': 'GET MY SIGNAL NOW',
       'hero.video': 'Insert your Firemode Signal presentation video here',
       'problem.tag': 'The Problem',
@@ -1949,7 +2009,7 @@
       ],
       'cta.tag': 'Last step',
       'cta.title': 'Stop posting in the<br><span class="highlight">dark.</span>',
-      'cta.sub': 'While you read this, your competitors are interpreting signals you\'re still missing. Signal translates those signals into ready content — today, via <strong>WhatsApp</strong>.',
+      'cta.sub': 'While you read this, your competitors are interpreting signals you\'re still missing. Signal translates those signals into ready-to-use scripts and real strategy — today, via <strong>WhatsApp</strong>.',
       'cta.btn': 'TALK TO SIGNAL NOW',
       'cta.note': 'Response within 2h on business days · No initial commitment',
       'trust.tag': 'Safety & Transparency',
