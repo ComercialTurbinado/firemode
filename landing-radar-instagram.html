@@ -376,6 +376,10 @@
     .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
     /* ── HERO VIDEO ── */
+    /* canvas de partículas no hero */
+    #hero { position: relative; overflow: hidden; }
+    #hero-particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: block; }
+
     .hero-video-wrap {
       position: relative; border-radius: 20px; overflow: hidden;
       background: var(--bg-card); border: 1px solid var(--border);
@@ -383,6 +387,38 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 0 80px rgba(124,58,237,0.12);
     }
+    /* override quando usada como coluna de form */
+    .hero-video-wrap.hero-form-side {
+      aspect-ratio: unset; max-height: unset; background: transparent;
+      border: none; box-shadow: none; display: block; overflow: visible;
+    }
+
+    /* ── HERO INLINE FORM ─────────────────────────────── */
+    .hero-form-card {
+      background: rgba(13,13,24,.72); backdrop-filter: blur(22px) saturate(1.3);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 20px; padding: 36px 30px;
+      box-shadow: 0 0 0 1px rgba(124,58,237,.14), 0 28px 64px rgba(0,0,0,.45);
+    }
+    .hero-form-eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase;
+      color: var(--accent-2); margin-bottom: 10px;
+    }
+    .hero-form-title { font-size: 21px; font-weight: 900; line-height: 1.2; letter-spacing: -.02em; color: var(--text); margin-bottom: 7px; }
+    .hero-form-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.5; }
+    .hero-field { margin-bottom: 11px; }
+    .hero-field input {
+      width: 100%; padding: 12px 15px; border-radius: 10px; font-size: 14px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      color: var(--text); font-family: inherit; outline: none; box-sizing: border-box;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .hero-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,58,237,.18); }
+    .hero-field input::placeholder { color: rgba(255,255,255,.28); }
+    .hero-form-privacy { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 14px; }
+    body.light .hero-form-card { background: rgba(255,255,255,.78); border-color: rgba(0,0,0,.1); }
+    body.light .hero-field input { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.12); color: #0D0D18; }
+    body.light .hero-field input::placeholder { color: rgba(0,0,0,.32); }
     .hero-video-wrap video {
       width: 100%; height: 100%; object-fit: cover; display: block;
     }
@@ -1283,6 +1319,7 @@
 
 <!-- HERO -->
 <section id="hero">
+  <canvas id="hero-particles" aria-hidden="true"></canvas>
   <div class="container">
     <div class="hero-grid">
 
@@ -1307,63 +1344,28 @@
 
       </div>
 
-      <!-- COLUNA DIREITA: REEL MOCKUP -->
-      <div class="hero-video-wrap">
-        <div class="reel-scene">
-
-          <!-- Fundo simulando vídeo -->
-          <div class="reel-bg"></div>
-          <div class="reel-figure"></div>
-
-          <!-- Barra de progresso tipo Reel -->
-          <div class="reel-progress">
-            <div class="reel-progress-fill"></div>
-          </div>
-
-          <!-- Badge VIRAL -->
-          <div class="reel-viral">🔥 VIRAL</div>
-
-          <!-- Sidebar de engajamento -->
-          <div class="reel-sidebar">
-            <div class="reel-action">
-              <div class="reel-icon-btn">
-                <div class="reel-heart-anim">
-                  <svg viewBox="0 0 24 24" fill="#FF2D55" width="26" height="26"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </div>
-              </div>
-              <span class="reel-lbl" id="reel-like-count">47.2K</span>
+      <!-- COLUNA DIREITA: FORM DE INSCRIÇÃO -->
+      <div class="hero-video-wrap hero-form-side">
+        <div class="hero-form-card">
+          <div class="hero-form-eyebrow">Comece agora · Grátis</div>
+          <h3 class="hero-form-title">Receba seu primeiro diagnóstico</h3>
+          <p class="hero-form-sub">Preencha abaixo e a Sofia AI entra em contato via WhatsApp com sua análise.</p>
+          <form id="hero-inline-form" onsubmit="submitHeroForm(event)" novalidate>
+            <div class="hero-field">
+              <input type="text" id="hero-name" placeholder="Seu nome completo" autocomplete="name" required />
             </div>
-            <div class="reel-action">
-              <div class="reel-icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="24" height="24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              </div>
-              <span class="reel-lbl">2.1K</span>
+            <div class="hero-field">
+              <input type="tel" id="hero-phone" placeholder="WhatsApp (+55 11 9 9999-9999)" autocomplete="tel" required />
             </div>
-            <div class="reel-action">
-              <div class="reel-icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="22" height="22"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </div>
-              <span class="reel-lbl">8.4K</span>
+            <div class="hero-field">
+              <input type="email" id="hero-email" placeholder="Seu melhor e-mail" autocomplete="email" />
             </div>
-          </div>
-
-          <!-- Corações flutuando -->
-          <div class="float-zone" id="float-zone"></div>
-
-          <!-- Info do criador -->
-          <div class="reel-bottom">
-            <div class="reel-avatar-row">
-              <div class="reel-avatar-ring"></div>
-              <span class="reel-uname">@mentora.carol</span>
-              <span class="reel-follow">+ Seguir</span>
-            </div>
-            <div class="reel-caption">Como fechei 5 clientes em 1 semana sem anúncio 🚀</div>
-            <div class="reel-song">
-              <div class="reel-song-disc">♪</div>
-              <span class="reel-song-txt">Som original · mentora.carol</span>
-            </div>
-          </div>
-
+            <button type="submit" class="btn btn-wpp" style="width:100%;border:none;cursor:pointer;justify-content:center;margin-top:6px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              QUERO MEU DIAGNÓSTICO
+            </button>
+          </form>
+          <p class="hero-form-privacy">🔒 Seus dados não são compartilhados.</p>
         </div>
       </div>
 
@@ -2486,6 +2488,119 @@
     document.getElementById('lead-form').reset();
   }
 
+  /* ── HERO INLINE FORM ──────────────────────────────── */
+  function submitHeroForm(e) {
+    e.preventDefault();
+    const name  = (document.getElementById('hero-name')  || {}).value?.trim() || '';
+    const phone = (document.getElementById('hero-phone') || {}).value?.trim() || '';
+    const email = (document.getElementById('hero-email') || {}).value?.trim() || '';
+    if (!name || !phone) {
+      const missing = !name ? 'hero-name' : 'hero-phone';
+      const el = document.getElementById(missing);
+      if (el) { el.focus(); el.style.borderColor = '#ef4444'; setTimeout(() => el.style.borderColor = '', 1800); }
+      return;
+    }
+    const msg = `Olá! Quero meu diagnóstico no Firemode Signal. 🚀\n\n👤 Nome: ${name}\n📱 WhatsApp: ${phone}${email ? `\n📧 E-mail: ${email}` : ''}`;
+    window.open(`https://wa.me/${SIGNAL_WPP}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  /* ── HERO PARTICLES ─────────────────────────────────── */
+  (function () {
+    const canvas = document.getElementById('hero-particles');
+    if (!canvas) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const ctx  = canvas.getContext('2d');
+    const hero = document.getElementById('hero');
+    let W, H, raf;
+    let mx = -2000, my = -2000;
+
+    function resize() {
+      W = canvas.width  = hero.offsetWidth;
+      H = canvas.height = hero.offsetHeight;
+    }
+    window.addEventListener('resize', () => { resize(); });
+    resize();
+
+    hero.addEventListener('mousemove', e => {
+      const r = hero.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    });
+    hero.addEventListener('mouseleave', () => { mx = -2000; my = -2000; });
+
+    const N = 68;
+    const pts = Array.from({ length: N }, () => ({
+      x:   Math.random() * (W || 800),
+      y:   Math.random() * (H || 600),
+      vx:  (Math.random() - .5) * .45,
+      vy:  (Math.random() - .5) * .45,
+      r:   Math.random() * 1.7 + .5,
+      a:   Math.random() * .42 + .1,
+      hue: 245 + Math.random() * 55
+    }));
+
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+
+      for (let i = 0; i < N; i++) {
+        const p = pts[i];
+
+        /* organic drift */
+        p.vx += (Math.random() - .5) * .016;
+        p.vy += (Math.random() - .5) * .016;
+
+        /* smooth mouse attraction */
+        const dx = mx - p.x, dy = my - p.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < 55000) { /* ~235px radius */
+          const d = Math.sqrt(d2) || 1;
+          const f = (235 - d) / 235 * .011;
+          p.vx += (dx / d) * f;
+          p.vy += (dy / d) * f;
+        }
+
+        /* damping + speed cap */
+        p.vx *= .978;
+        p.vy *= .978;
+        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (spd > .85) { p.vx *= .85 / spd; p.vy *= .85 / spd; }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        /* wrap */
+        if (p.x < -6) p.x = W + 6;
+        if (p.x > W + 6) p.x = -6;
+        if (p.y < -6) p.y = H + 6;
+        if (p.y > H + 6) p.y = -6;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue},62%,72%,${p.a})`;
+        ctx.fill();
+      }
+
+      /* connection lines */
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < 8100) { /* 90px */
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.strokeStyle = `rgba(124,58,237,${(1 - d2 / 8100) * .11})`;
+            ctx.lineWidth = .5;
+            ctx.stroke();
+          }
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    tick();
+  })();
+
   /* ── SOCIAL MOCKUP ANIMATIONS ──────────────────────── */
   (function () {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -2495,38 +2610,6 @@
       if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
       return String(n);
     }
-
-    /* ── REEL HERO: likes + corações ───────────────── */
-    let reelLikes = 47200;
-    const likeEl   = document.getElementById('reel-like-count');
-    const floatZone = document.getElementById('float-zone');
-    const hearts    = ['❤️','💜','🧡','💕','💗'];
-
-    function spawnHeart() {
-      if (!floatZone) return;
-      const h = document.createElement('div');
-      h.className = 'fheart';
-      h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-      h.style.right  = (Math.random() * 32) + 'px';
-      h.style.bottom = (Math.random() * 10) + 'px';
-      h.style.animationDelay = (Math.random() * 0.25) + 's';
-      h.style.fontSize = (16 + Math.random() * 10) + 'px';
-      floatZone.appendChild(h);
-      setTimeout(() => h.remove(), 2200);
-    }
-
-    function tickReel() {
-      if (!likeEl) return;
-      reelLikes += Math.floor(Math.random() * 180) + 40;
-      likeEl.textContent = fmt(reelLikes);
-      likeEl.classList.remove('pop');
-      void likeEl.offsetWidth;
-      likeEl.classList.add('pop');
-      const n = Math.floor(Math.random() * 3) + 2;
-      for (let i = 0; i < n; i++) setTimeout(spawnHeart, i * 190);
-    }
-
-    if (likeEl) setInterval(tickReel, 1300);
 
     /* ── TIKTOK PHONE: seguidores + curtidas ────────── */
     let ttkFollowers = 89200;
