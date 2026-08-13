@@ -1,0 +1,37 @@
+---
+description: Roadmap de presença digital — não reinventar Radar; cobrar próximos pontos
+alwaysApply: true
+---
+
+# Presença digital (Firemode)
+
+## Já existe — NÃO refazer
+
+- **Redes sociais (Instagram):** o **Radar Espião** (`radarespiao`) já gera relatório profundo para o cliente.
+- Dados no Supabase em **`analises`** (e correlatas). Hoje **só Instagram**.
+- No admin Conteúdo / Content Machine: **não** montar scrape Apify de IG do zero.
+- **Já existe no Content Machine:** snapshot IG + **comparativo vs concorrentes SERP** (`presenca.instagram`) — @, seguidores, frequência de posts. Não substitui o Radar.
+- **Já existe:** TikTok (`presenca.tiktok`) — perfil RapidAPI + posts + comparativo SERP + scorecard.
+- **Futuro:** linkar a análise do Radar aqui (por `cliente_handle`) e estender Radar para outras redes (TikTok, YouTube, Facebook). LinkedIn só quando houver auditoria real.
+- **Método:** Seis Chapéus por canal (determinístico) + chapéu azul geral no Plano de Impacto. Ordem: Site → Busca → GMB → Blog → Ads → IG/TT/YT → Percepção.
+
+## Roadmap que o Claudio quer (cobrar / lembrar)
+
+Quando terminar um item de presença ou o usuário perguntar “o que falta”, **lembre e cobre** os pendentes — ele gostou e quer colocar:
+
+| Prioridade | Item | Status |
+|---|---|---|
+| 1 | **Google Meu Negócio** (Maps/Places + checklist + reviews + nota interna + botão atualizar) | **Fase 1 — feita** |
+| 2 | **Scorecard de presença** no admin (Site · GMB · IG · TikTok · YT · Busca · Ads · Reviews) | **Fase 2 — feita** |
+| 3 | **Tech / SEO on-page** do site (HTTPS, meta, mobile, schema, sitemap) | **Fase 3 — feita** |
+| 4 | **Autoridade de busca da marca** (nome da empresa na SERP / Knowledge Graph) | **Fase 4 — feita** |
+| 5 | **Meta Ad Library** (ads reais do cliente/concorrentes) | **Fase 5 — feita** |
+| 6 | YouTube / WhatsApp-contato / Reviews externos / NAP consistency | **YouTube + IG + TikTok feitos** · falta WhatsApp / Reviews / NAP |
+| 7 | Linkar **Radar** (IG+) na página de conteúdo/cliente | Futuro (depois das redes no Radar) |
+| — | **Plano de impacto unificado** (gaps → 3 movimentos → oferta) | **Feito** — `#impacto` + `POST /impacto/gerar` |
+| — | **Percepção de valor** (Whisper IG/YT + vision → declarado × percebido) | **V1 feita** — botão `#percepcao` + `POST /percepcao-valor/atualizar` |
+| — | **Trilha de conteúdo** (análises → percepção → gerar) + **desIAização** | **Feito** — gate UI/API/CM + step `desia` + botão na peça |
+
+## Como cobrar
+
+Ao fechar GMB, SEO on-page, scorecard, ads, IG, TikTok, plano de impacto, percepção ou trilha de conteúdo: diga o que ficou pronto e pergunte qual o **próximo da lista**. Não deixe o roadmap morrer em silêncio.
