@@ -4,9 +4,9 @@ frontend:
     preBuild:
       commands:
         - mkdir -p dist
-        - cp landing-radar-instagram.html dist/index.html
-        - cp protocolo-de-performance.html dist/protocolo-de-performance.html
-        - mkdir -p dist/signal && cp signal.html dist/signal/index.html
+        - cp lp/landing-radar-instagram.html dist/index.html
+        - cp lp/protocolo-de-performance.html dist/protocolo-de-performance.html
+        - mkdir -p dist/signal && cp lp/signal.html dist/signal/index.html
     build:
       commands:
         - echo "Static build complete"
