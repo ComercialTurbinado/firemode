@@ -1,18 +1,22 @@
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - mkdir -p dist
-        - cp lp/landing-radar-instagram.html dist/index.html
-        - cp lp/protocolo-de-performance.html dist/protocolo-de-performance.html
-        - mkdir -p dist/signal && cp lp/signal.html dist/signal/index.html
-    build:
-      commands:
-        - echo "Static build complete"
-  artifacts:
-    baseDirectory: dist
-    files:
-      - '**/*'
-  cache:
-    paths: []
+applications:
+  - appRoot: admin
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - nvm install 22
+            - nvm use 22
+            - npm ci
+        build:
+          commands:
+            - nvm use 22
+            - npm run build
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+          - .next/cache/**/*

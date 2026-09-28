@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">S tecnológico 3D dividido em quatro degraus</title>
+  <desc id="desc">Marca vetorial em perspectiva, com quatro segmentos extrudados formando claramente a letra S.</desc>
+
+  <defs>
+    <path
+      id="s-silhouette"
+      d="M374 125c-33-42-78-63-137-63-84 0-142 43-142 109 0 65 49 93 135 114 57 14 79 25 79 50 0 27-25 43-67 43-50 0-91-20-126-62l-55 54c44 55 105 82 179 82 91 0 153-47 153-119 0-69-50-98-142-120-54-13-77-24-77-47 0-22 23-37 61-37 39 0 72 15 101 50l50-54Z"
+    />
+    <mask id="four-steps">
+      <rect width="512" height="512" fill="#fff"/>
+      <!-- Três cortes percorrem a curva de forma alternada: esquerda, centro e direita. -->
+      <path d="m96 206 12 12 76-76-12-12-76 76Z" fill="#000"/>
+      <path d="m200 288 12 12 80-80-12-12-80 80Z" fill="#000"/>
+      <path d="m296 382 12 12 80-80-12-12-80 80Z" fill="#000"/>
+    </mask>
+  </defs>
+
+  <!-- Perspectiva oblíqua aplicada ao conjunto inteiro. -->
+  <g transform="matrix(.92 -.16 .2 .78 2 105)" mask="url(#four-steps)">
+    <!-- Extrusão construída somente com faces vetoriais de cor chapada. -->
+    <g fill="#c72d10">
+      <use href="#s-silhouette" transform="translate(0 36)"/>
+      <use href="#s-silhouette" transform="translate(0 35)"/>
+      <use href="#s-silhouette" transform="translate(0 34)"/>
+      <use href="#s-silhouette" transform="translate(0 33)"/>
+      <use href="#s-silhouette" transform="translate(0 32)"/>
+      <use href="#s-silhouette" transform="translate(0 31)"/>
+      <use href="#s-silhouette" transform="translate(0 30)"/>
+      <use href="#s-silhouette" transform="translate(0 29)"/>
+      <use href="#s-silhouette" transform="translate(0 28)"/>
+      <use href="#s-silhouette" transform="translate(0 27)"/>
+      <use href="#s-silhouette" transform="translate(0 26)"/>
+      <use href="#s-silhouette" transform="translate(0 25)"/>
+      <use href="#s-silhouette" transform="translate(0 24)"/>
+      <use href="#s-silhouette" transform="translate(0 23)"/>
+      <use href="#s-silhouette" transform="translate(0 22)"/>
+      <use href="#s-silhouette" transform="translate(0 21)"/>
+      <use href="#s-silhouette" transform="translate(0 20)"/>
+      <use href="#s-silhouette" transform="translate(0 19)"/>
+      <use href="#s-silhouette" transform="translate(0 18)"/>
+      <use href="#s-silhouette" transform="translate(0 17)"/>
+      <use href="#s-silhouette" transform="translate(0 16)"/>
+      <use href="#s-silhouette" transform="translate(0 15)"/>
+      <use href="#s-silhouette" transform="translate(0 14)"/>
+      <use href="#s-silhouette" transform="translate(0 13)"/>
+      <use href="#s-silhouette" transform="translate(0 12)"/>
+      <use href="#s-silhouette" transform="translate(0 11)"/>
+      <use href="#s-silhouette" transform="translate(0 10)"/>
+      <use href="#s-silhouette" transform="translate(0 9)"/>
+      <use href="#s-silhouette" transform="translate(0 8)"/>
+      <use href="#s-silhouette" transform="translate(0 7)"/>
+      <use href="#s-silhouette" transform="translate(0 6)"/>
+      <use href="#s-silhouette" transform="translate(0 5)"/>
+      <use href="#s-silhouette" transform="translate(0 4)"/>
+      <use href="#s-silhouette" transform="translate(0 3)"/>
+      <use href="#s-silhouette" transform="translate(0 2)"/>
+      <use href="#s-silhouette" transform="translate(0 1)"/>
+    </g>
+
+    <!-- Face superior flat. -->
+    <use href="#s-silhouette" fill="#0a0a0b"/>
+  </g>
+</svg>

@@ -1,7 +1,8 @@
 /**
  * Triagem comercial do lead da LP /vender/presenca.
  *
- * PATH:presenca_completa → tem site → Content Machine POST /analisar {url}
+ * PATH:presenca_completa → tem site → POST /api/vender/presenca/pipeline
+ *   (Content Machine /presenca/pipeline: full se domínio novo, refresh se já cliente)
  *   (+ IG se informado vira cliente_handle / redes)
  *
  * PATH:instagram_radar → sem site, tem @ → Radar Espião / auditoria IG

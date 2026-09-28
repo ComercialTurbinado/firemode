@@ -64,7 +64,7 @@ function JobRow({ job }: { job: JobStatus }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {job.parts.map((part) => (
           <div key={part.baseName} style={{
-            background: "#0d0d0d", borderRadius: 8, padding: "12px 16px",
+            background: "var(--fm-inset)", borderRadius: 8, padding: "12px 16px",
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
           }}>
             <div style={{ minWidth: 0 }}>

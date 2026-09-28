@@ -4,14 +4,18 @@ import { WaitlistHero } from "@/components/ui/waitlist-hero";
 import {
   isPresencaAbId,
   pickRandomPresencaAb,
-  PRESENCA_AB_FORM_FOOTER,
   PRESENCA_AB_STORAGE_KEY,
   PRESENCA_AB_VARIANTS,
   type PresencaAbId,
 } from "@/lib/vender-presenca-ab";
+import { PRESENCA_B_HERO } from "@/lib/vender-presenca-lp-b";
 import { useEffect, useState } from "react";
 
-type Props = { whatsappUrl: string | null };
+type Props = {
+  whatsappUrl: string | null;
+  /** a = controle · b = teste (esteira, sem garantia) */
+  lpVariant?: "a" | "b";
+};
 
 function resolveAbFromUrl(): PresencaAbId | null {
   if (typeof window === "undefined") return null;
@@ -44,34 +48,34 @@ function resolveOrAssignAb(): PresencaAbId {
   return picked;
 }
 
-export default function PresencaHeroAb({ whatsappUrl }: Props) {
+export default function PresencaHeroAb({
+  whatsappUrl,
+  lpVariant = "a",
+}: Props) {
   const [ab, setAb] = useState<PresencaAbId | null>(null);
+  const isB = lpVariant === "b";
 
   useEffect(() => {
     setAb(resolveOrAssignAb());
   }, []);
 
-  // Evita flash da variante errada no SSR
+  // Evita flash da variante errada no SSR (bg transparente p/ ColorBends fixo)
   if (!ab) {
-    return (
-      <div className="w-full min-h-[100svh] bg-[#09090b]" aria-hidden />
-    );
+    return <div className="w-full min-h-[100svh] bg-transparent" aria-hidden />;
   }
 
   const v = PRESENCA_AB_VARIANTS[ab];
 
   return (
     <WaitlistHero
-      eyebrow="Diagnóstico"
       title={v.title}
-      subtitle={v.subtitle}
-      ctaLabel="Quero o diagnóstico"
+      subtitle={isB ? PRESENCA_B_HERO.subtitulo : v.subtitle}
+      ctaLabel={isB ? PRESENCA_B_HERO.cta : "Quero saber o que o cliente vê"}
       successLabel="Abrindo o WhatsApp"
       placeholder="site.com.br ou @instagram"
       field="presence"
       whatsappUrl={whatsappUrl}
-      abVariant={ab}
-      formFooter={PRESENCA_AB_FORM_FOOTER}
+      abVariant={isB ? `b-${ab}` : ab}
     />
   );
 }

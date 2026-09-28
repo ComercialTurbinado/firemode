@@ -4,20 +4,18 @@ import {
   buildPresencaLeadWhatsappMsg,
   parsePresenceOrInstagram,
 } from "@/lib/vender-presenca-lead";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 type Status = "idle" | "loading" | "success";
 
 export type WaitlistHeroProps = {
   title?: string;
   subtitle?: string;
-  eyebrow?: string;
   ctaLabel?: string;
   successLabel?: string;
   placeholder?: string;
   /** Se informado, após sucesso abre o WhatsApp (lead comercial). */
   whatsappUrl?: string | null;
-  brandSrc?: string;
   className?: string;
   /** Campo principal: e-mail, URL do site, ou site/Instagram (presença). */
   field?: "email" | "website" | "presence";
@@ -37,18 +35,13 @@ type Particle = {
   size: number;
 };
 
-const DEFAULT_BRAND =
-  "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=256&q=80";
-
 export function WaitlistHero({
   title = "Veja a apresentação que o seu site gera.",
   subtitle = "Nota por canal, o que está furado, o que corrigir primeiro — e a prova na tela. Coloque o site e conheça a ferramenta pelo resultado.",
-  eyebrow = "Firemode · Diagnóstico de presença",
   ctaLabel = "Gerar apresentação",
   successLabel = "Abrindo o WhatsApp",
   placeholder = "seusite.com.br",
   whatsappUrl = null,
-  brandSrc = DEFAULT_BRAND,
   className = "",
   field = "website",
   abVariant = null,
@@ -58,8 +51,38 @@ export function WaitlistHero({
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const bgLayerRef = useRef<HTMLDivElement | null>(null);
   const isWebsite = field === "website";
   const isPresence = field === "presence";
+
+  useEffect(() => {
+    const layer = bgLayerRef.current;
+    if (!layer) return;
+
+    const BASE_PERSPECTIVE = 4380;
+    const MAX_PERSPECTIVE = 9800;
+    let raf = 0;
+
+    const update = () => {
+      const max = Math.max(1, window.innerHeight * 0.9);
+      const t = Math.min(1, Math.max(0, window.scrollY / max));
+      // Scroll desce → perspective sobe (efeito mais “plano” / afastado)
+      const perspective = BASE_PERSPECTIVE + t * (MAX_PERSPECTIVE - BASE_PERSPECTIVE);
+      layer.style.transform = `perspective(${perspective}px) rotateX(0deg) translateY(-2%)`;
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -77,6 +100,17 @@ export function WaitlistHero({
       if (!msg) {
         setError("Manda o site (empresa.com.br) ou o Instagram (@perfil).");
         return;
+      }
+      // Sequência automática quando tem site
+      if (parsed.site) {
+        void fetch("/api/vender/presenca/pipeline", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            site: parsed.site,
+            instagram: parsed.instagram ?? undefined,
+          }),
+        }).catch(() => { /* fire-and-forget */ });
       }
       setStatus("loading");
       window.setTimeout(() => {
@@ -96,6 +130,16 @@ export function WaitlistHero({
     }
 
     setStatus("loading");
+
+    // Hero "website": dispara pipeline + WhatsApp
+    if (isWebsite) {
+      const site = raw.match(/^https?:\/\//i) ? raw : `https://${raw}`;
+      void fetch("/api/vender/presenca/pipeline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ site }),
+      }).catch(() => { /* fire-and-forget */ });
+    }
 
     window.setTimeout(() => {
       setStatus("success");
@@ -186,12 +230,12 @@ export function WaitlistHero({
     bluePrimary: "#ea580c",
     success: "#10b981",
     inputBg: "#27272a",
-    baseBg: "#09090b",
+    baseBg: "transparent",
     inputShadow: "rgba(255, 255, 255, 0.1)",
   };
 
   return (
-    <div className={`w-full min-h-[100svh] bg-black flex items-center justify-center ${className}`}>
+    <div className={`w-full min-h-[100svh] bg-transparent flex items-center justify-center ${className}`}>
       <style>{`
         @keyframes spin-slow {
           from { transform: rotate(0deg); }
@@ -250,19 +294,19 @@ export function WaitlistHero({
       `}</style>
 
       <div
-        className="relative w-full h-[100svh] overflow-hidden shadow-2xl"
+        className="relative w-full h-[100svh]"
         style={{
-          backgroundColor: colors.baseBg,
+          backgroundColor: "transparent",
           fontFamily: "var(--font-body), system-ui, sans-serif",
         }}
       >
         {/* Background Decorative Layer */}
         <div
-          className="absolute inset-0 w-full h-full pointer-events-none"
+          ref={bgLayerRef}
+          className="absolute inset-0 w-full h-full pointer-events-none will-change-transform"
           style={{
-            perspective: "1200px",
-            transform: "perspective(1200px) rotateX(15deg)",
-            transformOrigin: "center bottom",
+            transform: "perspective(4380px) rotateX(0deg) translateY(-2%)",
+            transformOrigin: "center center",
             opacity: 1,
           }}
         >
@@ -327,23 +371,12 @@ export function WaitlistHero({
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
-            background: `linear-gradient(to top, ${colors.baseBg} 10%, rgba(9, 9, 11, 0.8) 40%, transparent 100%)`,
+            background:
+              "radial-gradient(72% 58% at 50% 48%, rgba(5, 6, 8, 0.92) 0%, rgba(5, 6, 8, 0.72) 28%, rgb(5 6 8 / 83%) 52%, rgb(5 6 8 / 80%) 72%, transparent 86%)",
           }}
         />
 
-        <div className="relative z-20 w-full h-full flex flex-col items-center justify-end pb-12 md:pb-16 gap-5 px-4">
-          <div className="w-16 h-16 rounded-2xl shadow-lg overflow-hidden mb-1 ring-1 ring-white/10 bg-zinc-900 flex items-center justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={brandSrc} alt="Firemode" className="w-full h-full object-cover" />
-          </div>
-
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.18em] text-center"
-            style={{ color: colors.bluePrimary }}
-          >
-            {eyebrow}
-          </p>
-
+        <div className="relative z-20 w-full h-full flex flex-col items-center justify-center gap-4 px-4 pt-28 pb-16 md:pt-32">
           <h1
             className="text-4xl sm:text-5xl md:text-6xl font-bold text-center tracking-tight max-w-3xl leading-[1.05]"
             style={{
@@ -355,14 +388,19 @@ export function WaitlistHero({
             {title}
           </h1>
 
-          <p
-            className="text-base md:text-lg font-medium text-center max-w-xl leading-relaxed"
-            style={{ color: colors.textSecondary }}
-          >
-            {subtitle}
-          </p>
+          <div className="flex flex-col items-center gap-3 max-w-xl w-full">
+            {subtitle.split(/\n\n+/).map((block, i) => (
+              <div
+                key={i}
+                className="text-base md:text-lg font-medium text-center leading-relaxed"
+                style={{ color: colors.textSecondary }}
+              >
+                {block}
+              </div>
+            ))}
+          </div>
 
-          <div className="w-full max-w-md px-1 mt-3 h-[60px] relative perspective-1000">
+          <div className="w-full max-w-xl px-1 mt-3 h-[72px] md:h-[76px] relative perspective-1000">
             <canvas
               ref={canvasRef}
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none z-50"
@@ -429,7 +467,7 @@ export function WaitlistHero({
                   setError(null);
                   setValue(e.target.value);
                 }}
-                className="w-full h-[60px] pl-6 pr-[168px] rounded-full outline-none transition-all duration-200 placeholder-zinc-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full h-full pl-7 pr-[240px] sm:pr-[260px] md:pr-[280px] rounded-full outline-none transition-all duration-200 placeholder-zinc-500 disabled:opacity-70 disabled:cursor-not-allowed text-base md:text-lg"
                 style={{
                   backgroundColor: colors.inputBg,
                   color: colors.textMain,
@@ -437,11 +475,11 @@ export function WaitlistHero({
                 }}
               />
 
-              <div className="absolute top-[6px] right-[6px] bottom-[6px]">
+              <div className="absolute top-[7px] right-[7px] bottom-[7px]">
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="h-full px-5 rounded-full font-medium text-white transition-all active:scale-95 hover:brightness-110 disabled:hover:brightness-100 disabled:active:scale-100 disabled:cursor-wait flex items-center justify-center min-w-[130px] text-sm"
+                  className="h-full px-5 sm:px-6 md:px-7 rounded-full font-semibold text-white transition-all active:scale-95 hover:brightness-110 disabled:hover:brightness-100 disabled:active:scale-100 disabled:cursor-wait flex items-center justify-center min-w-[200px] sm:min-w-[220px] md:min-w-[240px] text-sm md:text-base whitespace-nowrap"
                   style={{ backgroundColor: colors.bluePrimary }}
                 >
                   {status === "loading" ? (
@@ -493,9 +531,12 @@ export function WaitlistHero({
 
           <a
             href="#como"
-            className="mt-3 text-sm font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
+            className="mt-[1.125rem] inline-flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
+            aria-label="Avançar"
           >
-            Conhecer o método ↓
+            <span className="text-2xl leading-none" aria-hidden>
+              ↓
+            </span>
           </a>
         </div>
       </div>

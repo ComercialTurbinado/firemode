@@ -134,7 +134,7 @@ A LP envia tags na mensagem. O comercial segue assim:
 
 | Tag | Significado | Fluxo do relatório |
 |---|---|---|
-| `[PATH:presenca_completa]` | Tem site | Content Machine `POST /analisar` com a URL. Presença completa (site, Google, redes, ads…). Se veio `@`, gravar como `cliente_handle` / redes. |
+| `[PATH:presenca_completa]` | Tem site | Admin/LP dispara `POST /presenca/pipeline` (full se domínio novo, refresh se já cliente). Presença completa automática. Se veio `@`, gravar como `cliente_handle` / redes. |
 | `[PATH:instagram_radar]` | Sem site, tem Instagram | **Radar Espião** (IG + concorrentes). Na apresentação: Site = pendente / recomendar criar site. Depois do site, migrar para presença completa. |
 
 **Regra:** não bloquear lead sem site. Avaliar o que existe; site ausente vira achado comercial, não barreira.

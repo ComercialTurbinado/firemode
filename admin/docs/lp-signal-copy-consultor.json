@@ -1,0 +1,371 @@
+{
+  "meta": {
+    "pagina": "firemode-site/index.html",
+    "repo": "ComercialTurbinado/firemode",
+    "marca": "Firemode",
+    "produto": "Firemode Signal — Fábrica de Conteúdo via WhatsApp",
+    "gerado_em": "2026-07-28",
+    "uso": "Análise de copy no consultor — snapshot da LP Signal",
+    "fonte_local": "/Users/claudiodamasco/Documents/www/radarespiao/firemode-site/index.html"
+  },
+  "seo": {
+    "title": "Firemode Signal — Fábrica de Conteúdo que Vende",
+    "description": "14 posts prontos toda semana. Criados com os dados do seu mercado. Você só publica."
+  },
+  "oferta": {
+    "modelo": "assinatura mensal ou anual (−20%)",
+    "conversao": "WhatsApp only (sem formulário na página)",
+    "whatsapp": {
+      "numero": "5511982195839",
+      "mensagem_base": "Olá! Quero ativar minha fábrica de conteúdo no Firemode Signal. 🚀",
+      "origens": ["nav", "hero", "radar", "fabrica", "dominancia", "cta-final"]
+    },
+    "ancora_agencia": "Uma agência cobra R$5.000/mês para fazer parte disso. Aqui começa em R$236.40.",
+    "mencao_apartir_de": "A partir de R$197/mês (tabela Sem×Com); planos exibidos começam em R$236/mês",
+    "planos": [
+      {
+        "id": "radar",
+        "nome": "Radar Mensal",
+        "tagline": "Para quem quer estar sempre à frente do mercado.",
+        "preco_mensal": 236,
+        "preco_anual": 2269,
+        "equivalente_mensal_anual": 189.08,
+        "recorrencia": "Recorrente · Cancela quando quiser",
+        "features": [
+          "Monitoramento de 2 concorrentes",
+          "Alerta quando post viral aparecer no seu nicho",
+          "Roteiro adaptado entregue via WhatsApp",
+          "Análise semanal do que funciona no mercado"
+        ],
+        "cta": "Ativar meu Radar",
+        "foot": "Para quem quer parar de reagir e começar a antecipar."
+      },
+      {
+        "id": "fabrica",
+        "nome": "Fábrica de Conteúdo",
+        "destaque": "Mais escolhido",
+        "tagline": "Para quem quer volume com estratégia, toda semana.",
+        "preco_mensal": 476,
+        "preco_anual": 4573,
+        "equivalente_mensal_anual": 381.08,
+        "features": [
+          "Tudo do Radar, mais:",
+          "14 posts prontos toda semana",
+          "Legendas com SEO e CTA integrado",
+          "Funil completo — atração, autoridade e conversão",
+          "Alert Instantâneo ilimitado",
+          "Diretrizes de tom de voz calibradas"
+        ],
+        "cta": "Quero minha fábrica",
+        "foot": "Para quem cansa de improvisar e quer aparecer todo dia."
+      },
+      {
+        "id": "dominancia",
+        "nome": "Dominância",
+        "tagline": "Para quem não aceita ser o segundo do nicho.",
+        "preco_mensal": 836,
+        "preco_anual": 8019,
+        "equivalente_mensal_anual": 668.25,
+        "features": [
+          "Tudo da Fábrica, mais:",
+          "Monitoramento de até 5 concorrentes",
+          "Análise de mercado semanal detalhada",
+          "Plano 30/60/90 dias atualizado mensalmente",
+          "Score de posicionamento vs. concorrentes"
+        ],
+        "cta": "Quero dominar meu nicho",
+        "foot": "Para Mentores e Especialistas que querem o topo."
+      }
+    ]
+  },
+  "navegacao": [
+    { "id": "hero", "label": "Hero / Começar agora" },
+    { "id": "problem", "label": "Problema" },
+    { "id": "why", "label": "Por que funciona" },
+    { "id": "timeline", "label": "Como funciona" },
+    { "id": "compare", "label": "Sem × Com" },
+    { "id": "deliverables", "label": "Entregáveis" },
+    { "id": "fomo", "label": "Urgência" },
+    { "id": "pricing", "label": "Planos" },
+    { "id": "cta", "label": "CTA final" },
+    { "id": "faq", "label": "FAQ" }
+  ],
+  "ctas": [
+    "Começar agora",
+    "Quero garantir meu espaço agora",
+    "Ativar meu Radar",
+    "Quero minha fábrica",
+    "Quero dominar meu nicho"
+  ],
+  "secoes": {
+    "hero": {
+      "id": "hero",
+      "badge": "Fábrica de conteúdo · Via WhatsApp",
+      "headline_linhas": [
+        "Você não contrata o Signal para postar mais.",
+        "Contrata para vender mais."
+      ],
+      "paragrafos": [
+        "Seguidor não paga boleto. Curtida não fecha contrato.",
+        "O conteúdo só importa quando ele move alguém de \"nunca ouvi falar\" para \"quero comprar\". É exatamente para isso que cada post é construído aqui — não para impressionar o algoritmo, mas para converter quem já está te acompanhando.",
+        "Todo carrossel tem um papel no funil. Todo Reel tem um objetivo. Toda legenda tem um próximo passo. Sem isso, é só barulho bonito."
+      ],
+      "callout": "Conteúdo sem estratégia de conversão é entretenimento gratuito para o seu concorrente.",
+      "cta": "Quero garantir meu espaço agora",
+      "microcopy": "Primeira entrega em 24h · 14 posts prontos por semana · Cancela quando quiser",
+      "demo_whatsapp": {
+        "contato": "Firemode Signal",
+        "script": [
+          {
+            "tag": "ASSUNTO EM ALTA",
+            "texto": "Mentores que publicam resultado de alunos têm 3× mais conversão. Esse tema está viralizando no seu nicho agora."
+          },
+          {
+            "texto": "Quer um roteiro de Reel sobre isso? Ou prefere um carrossel? Posso fazer os dois 👇"
+          },
+          {
+            "de": "cliente",
+            "texto": "quero os dois!"
+          },
+          {
+            "tipo": "roteiro_reel_60s",
+            "gancho": "Meu aluno saiu de 2k para 30k...",
+            "corpo": "Os 3 pilares do método",
+            "cta": "Comenta MÉTODO que te mando o PDF"
+          },
+          {
+            "de": "cliente",
+            "texto": "video_bruto.mp4 · 147 MB"
+          },
+          {
+            "texto": "✅ Vídeo editado e pronto — Cortes, legenda dinâmica e capa incluídos. Só publicar"
+          }
+        ]
+      }
+    },
+    "stats": {
+      "itens": [
+        { "numero": "14", "label": "entregas por semana" },
+        { "numero": "24h", "label": "para a primeira entrega" },
+        { "numero": "0", "label": "ideias suas necessárias" },
+        { "numero": "100%", "label": "baseado em dado do nicho" }
+      ],
+      "callout": "Pedir para a IA criar um post todo dia não é inteligente. É só artificial."
+    },
+    "problema": {
+      "id": "problem",
+      "titulo": "Seu Instagram pode estar trabalhando contra você — e o prejuízo é silencioso.",
+      "corpo": "Postar sem diagnóstico é como dirigir no escuro. Você grava Reels, segue tendências e gasta horas editando, mas o resultado não aparece. O problema não é falta de esforço; é falta de dados. Sem saber o que o seu mercado já validou e o que seus concorrentes fazem melhor, você está apenas queimando tempo.",
+      "cards": [
+        "Você demora horas para decidir o que postar.",
+        "Seus posts geram curtidas, mas zero DMs e vendas.",
+        "Sua bio não deixa claro o valor do seu serviço.",
+        "Você depende de inspiração para produzir."
+      ]
+    },
+    "metodo": {
+      "id": "why",
+      "eyebrow": "Por que vai funcionar para você",
+      "titulo": "Não é inspiração. É o que o seu mercado já validou esta semana.",
+      "corpo": "Todo post entregue vem de um lugar específico: o que está funcionando agora no seu nicho. Não é o que achamos que funciona. É o que o comportamento real da sua audiência está pedindo. O que os perfis de maior crescimento do seu segmento estão publicando. Para onde as métricas do mercado estão apontando. Você não precisa acertar. O mercado já acertou por você.",
+      "proof": [
+        {
+          "n": "01",
+          "titulo": "Os dados do seu mercado",
+          "texto": "Analisamos o que está viralizando no seu nicho nessa semana, não na semana passada."
+        },
+        {
+          "n": "02",
+          "titulo": "O comportamento da sua audiência",
+          "texto": "O tipo de conteúdo que gera salvamento, compartilhamento e clique no perfil. Não o que gera curtida."
+        },
+        {
+          "n": "03",
+          "titulo": "A estrutura que converte",
+          "texto": "Cada semana tem posts de atração, de autoridade e de conversão. Na sequência certa para mover leads pelo funil."
+        }
+      ],
+      "alert_instantaneo": {
+        "tag": "Recurso exclusivo · Alert Instantâneo",
+        "titulo": "Viu um conteúdo com potencial? Manda o link.",
+        "texto": "Em minutos você recebe o roteiro completo feito para o seu tom de voz, para o seu posicionamento, para a sua audiência. Não é uma cópia. É a estrutura que funcionou, reescrita para quem você é.",
+        "fecho": "O mercado deu o sinal. Você publica a resposta.",
+        "aviso": "Virais têm janela de 48 horas. Depois, é todo mundo fazendo o mesmo."
+      }
+    },
+    "como": {
+      "id": "timeline",
+      "eyebrow": "Da contratação ao resultado",
+      "titulo": "Da contratação à primeira publicação: 48 horas.",
+      "passos": [
+        {
+          "quando": "Hoje",
+          "texto": "Você entra, responde 3 perguntas sobre seu negócio e seus concorrentes"
+        },
+        {
+          "quando": "Em 24h",
+          "texto": "Primeiro pacote de conteúdo chega no seu WhatsApp"
+        },
+        {
+          "quando": "Em 48h",
+          "texto": "Você já está publicando com consistência"
+        },
+        {
+          "quando": "Em 7 dias",
+          "texto": "Sua presença começa a mudar. Você aparece todo dia, com conteúdo certo, para a pessoa certa."
+        },
+        {
+          "quando": "Em 30 dias",
+          "texto": "O algoritmo te favorece. A audiência te reconhece como referência. As perguntas no direct aumentam."
+        }
+      ],
+      "warn": "Cada semana sem consistência é uma semana que alguém do seu nicho ocupa o espaço que poderia ser seu. O Instagram não espera você estar pronto. Ele já está escolhendo quem aparece."
+    },
+    "comparativo": {
+      "id": "compare",
+      "eyebrow": "O esforço sem e com o Signal",
+      "titulo": "O que você gasta hoje para tentar resolver isso sozinho",
+      "linhas": [
+        {
+          "criterio": "Tempo por semana",
+          "sem": "8 a 15 horas pensando, gravando, editando, escrevendo",
+          "com": "30 minutos revisando e publicando"
+        },
+        {
+          "criterio": "Custo financeiro",
+          "sem": "Agência: R$3.000–R$8.000/mês. Freelancer: R$150–R$300 por post",
+          "com": "A partir de R$197/mês"
+        },
+        {
+          "criterio": "De onde vem o conteúdo",
+          "sem": "Da sua cabeça, quando você tem energia e inspiração",
+          "com": "Dos dados do seu mercado, toda semana"
+        },
+        {
+          "criterio": "Consistência",
+          "sem": "Quando dá. Quando sobra tempo. Quando você não está cansado.",
+          "com": "Todo dia. Sem depender do seu humor."
+        },
+        {
+          "criterio": "Estratégia de funil",
+          "sem": "Improviso. Post de valor aqui, story ali, sem sequência",
+          "com": "Atração, autoridade e conversão distribuídos na semana"
+        },
+        {
+          "criterio": "Resultado",
+          "sem": "Inconsistente, imprevisível",
+          "com": "Acumulativo, previsível"
+        }
+      ],
+      "fecho": "Você já está pagando para resolver esse problema. Em tempo, em dinheiro ou nos dois. A diferença é que agora você pode parar de pagar caro para ter resultado ruim."
+    },
+    "entrega": {
+      "id": "deliverables",
+      "eyebrow": "A entrega de elite",
+      "titulo": "Tudo que você recebe no Firemode Signal",
+      "itens": [
+        {
+          "titulo": "Diagnóstico de Posicionamento",
+          "texto": "Análise profunda de Bio, promessa e clareza comercial"
+        },
+        {
+          "titulo": "Benchmark Competitivo",
+          "texto": "Comparação visual com 2-5 concorrentes reais para diferenciar"
+        },
+        {
+          "titulo": "Análise de Virais",
+          "texto": "Leitura técnica dos conteúdos de maior performance do nicho"
+        },
+        {
+          "titulo": "Roteiros Prontos",
+          "texto": "Roteiros com ganchos, estrutura e CTAs baseados em dados reais"
+        },
+        {
+          "titulo": "Edição Done-For-You",
+          "texto": "Cortes automáticos, legendas dinâmicas e capas otimizadas"
+        },
+        {
+          "titulo": "Alert Instantâneo",
+          "texto": "Envie um link de viral e receba o roteiro pronto em minutos"
+        }
+      ]
+    },
+    "fomo": {
+      "id": "fomo",
+      "eyebrow": "O espaço existe agora",
+      "titulo": "O espaço que você não ocupa, alguém vai ocupar.",
+      "corpo": "No seu nicho, agora mesmo, tem alguém que está aparecendo todo dia. Publicando o que a audiência quer ver. Construindo autoridade que leva semanas para ser derrubada. Não porque ele é mais inteligente. Não porque ele tem mais talento. Porque ele tem sistema e você ainda está decidindo o que postar hoje. Toda semana que passa sem consistência, alguém avança no espaço que é seu por direito. Toda semana que você aparece, esse espaço fica menor para todo mundo que está tentando chegar onde você já está.",
+      "quote": "A posição de referência no seu nicho não fica vaga para sempre. Ela vai para quem aparece mais. Mais rápido. Com mais consistência. Essa pessoa pode ser você — ou pode ser o concorrente que contratou o Signal antes."
+    },
+    "preco": {
+      "id": "pricing",
+      "eyebrow": "Planos",
+      "titulo": "Você não paga para ter mais trabalho. Paga para parar de perder terreno.",
+      "subtitulo": "Uma agência cobra R$5.000/mês para fazer parte disso. Aqui começa em R$236.40.",
+      "toggle": ["Por mês", "Por ano · Economize 20%"],
+      "planos": "ver oferta.planos"
+    },
+    "cta_final": {
+      "id": "cta",
+      "eyebrow": "Próximo passo",
+      "titulo": "Seu próximo cliente já está no Instagram. Quem ele vai encontrar primeiro?",
+      "subtitulo": "Você ou o concorrente que começou a postar todo dia antes de você?",
+      "cta": "Quero garantir meu espaço agora",
+      "micro": "Primeira entrega em 24h · 14 posts prontos por semana · Cancela quando quiser"
+    },
+    "faq": {
+      "id": "faq",
+      "titulo": "Dúvidas frequentes",
+      "subtitulo": "Matando as últimas objeções antes de você decidir.",
+      "itens": [
+        {
+          "q": "O que é exatamente o Radar Instagram?",
+          "a": "O Radar Instagram não é uma ferramenta de agendamento ou um gerador de posts genéricos. É uma infraestrutura de inteligência competitiva que espiona anúncios ativos (Meta/LinkedIn), transcreve vídeos virais dos seus concorrentes e transforma esses dados em roteiros prontos e vídeos editados. Fim do achismo estratégico para quem busca escala."
+        },
+        {
+          "q": "Por que 100% via WhatsApp?",
+          "a": "Empreendedores de alto valor não têm tempo para aprender dashboards complexos ou memorizar senhas. O Radar foi desenvolvido para ter fricção zero: você recebe diagnósticos, envia vídeos brutos e recebe material finalizado tudo em uma conversa no WhatsApp. Se sabe encaminhar mensagem, sabe operar nosso sistema."
+        },
+        {
+          "q": "Como funciona a edição de vídeo automática?",
+          "a": "Após receber o roteiro estratégico, você grava pelo celular e nos envia o bruto. Nosso sistema aplica cortes automáticos de respiro, insere legendas dinâmicas de alta retenção e gera capa (thumbnail) com título impactante. Foco total em performance algorítmica e velocidade de postagem."
+        },
+        {
+          "q": "O Radar garante crescimento do meu perfil?",
+          "a": "Nenhuma inteligência séria garante resultados sem execução do cliente. O Radar entrega diagnóstico preciso e plano pronto, mas resultado final depende da sua consistência em gravar e publicar. Garantimos que você parará de quebrar cabeça sobre o que postar e usará o que o mercado já validou como lucrativo."
+        },
+        {
+          "q": "Eu preciso saber quem são meus concorrentes?",
+          "a": "Se já os conhece, análise será ainda mais cirúrgica. Caso contrário, nossas APIs identificam líderes do seu nicho através de anúncios ativos e volumes de engajamento para realizar benchmark competitivo automático."
+        },
+        {
+          "q": "É tudo feito por IA?",
+          "a": "Usamos tecnologia de ponta e análise assistida por dados para capturar o invisível (tags de anúncios, métricas de retenção), mas toda entrega é estruturada sob lógica de negócio e conversão para garantir conteúdo que gera autoridade e lucro, não apenas curtidas."
+        }
+      ]
+    },
+    "footer": {
+      "texto": "Firemode Signal · Inteligência de Conteúdo via WhatsApp",
+      "copyright": "© 2025 Firemode. Todos os direitos reservados."
+    }
+  },
+  "ausencias": [
+    "Formulário on-page (só WhatsApp)",
+    "Garantia dedicada / money-back explícito",
+    "Depoimentos / social proof de clientes",
+    "Seção de site / SEO / GMB / visibilidade em IA (ChatGPT etc.)",
+    "Stack de valor com preços item a item"
+  ],
+  "notas_para_consultor": {
+    "produto_vs_presenca": "Signal vende retenção/conteúdo contínuo via WhatsApp (assinatura). LP /vender/presenca vende diagnóstico pontual R$ 497 com garantia 60 dias e escopo 360° (site, busca, GMB, IA, redes).",
+    "promessa_central": "14 posts/semana baseados em dados do nicho + funil (atração/autoridade/conversão) + Alert Instantâneo + edição done-for-you, primeira entrega em 24h.",
+    "publico_implicito": "Mentores, especialistas, quem vive de Instagram e quer volume com estratégia.",
+    "dna_compartilhado_com_presenca": [
+      "Dor de postar sem mapa",
+      "Crítica à IA genérica (\"não é inteligente — é só artificial\")",
+      "Radar / concorrentes",
+      "Manda viral → recebe roteiro (Alert Instantâneo ≈ Consultor de vídeo viral)"
+    ],
+    "tensao_preco": "Tabela Sem×Com cita \"a partir de R$197/mês\"; planos começam em R$236; âncora de agência R$5.000."
+  }
+}

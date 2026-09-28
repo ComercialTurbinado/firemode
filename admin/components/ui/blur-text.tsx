@@ -16,7 +16,7 @@ export type BlurTextProps = {
   className?: string;
   style?: CSSProperties;
   as?: "p" | "span" | "h2" | "h3" | "div";
-  animateBy?: "words" | "letters";
+  animateBy?: "words" | "letters" | "line";
   direction?: "top" | "bottom";
   index?: number;
   stepDuration?: number;
@@ -35,7 +35,12 @@ export default function BlurText({
 }: BlurTextProps) {
   const reduce = useReducedMotion();
   const active = useSlideActive();
-  const elements = animateBy === "words" ? text.split(" ") : text.split("");
+  const elements =
+    animateBy === "line"
+      ? [text]
+      : animateBy === "words"
+        ? text.split(" ")
+        : text.split("");
   const fromY = direction === "top" ? -18 : 18;
   const baseDelay = index * 0.1;
 

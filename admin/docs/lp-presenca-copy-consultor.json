@@ -1,0 +1,410 @@
+{
+  "meta": {
+    "pagina": "/vender/presenca",
+    "repo": "ComercialTurbinado/admin-firemode",
+    "marca": "Firemode",
+    "produto": "Diagnóstico de presença digital",
+    "gerado_em": "2026-07-28",
+    "uso": "Análise de copy no consultor — snapshot da LP atual"
+  },
+  "seo": {
+    "title": "Diagnóstico de presença digital | Firemode",
+    "description": "Análise de presença, o que fazer, textos e conteúdo de redes (posts e vídeos) renovado toda semana durante 30 dias. Radar de concorrentes e consultor de vídeo viral. Sem senha. 60 dias de garantia.",
+    "keywords": [
+      "diagnóstico de presença digital",
+      "auditoria de marketing digital",
+      "scorecard de presença",
+      "Google Meu Negócio",
+      "Instagram para empresas",
+      "conteúdo para clínica odontológica",
+      "reel ortodontia",
+      "capa de post Instagram",
+      "Firemode"
+    ]
+  },
+  "oferta": {
+    "preco_pacote": 497,
+    "preco_label": "R$ 497",
+    "ancora_mercado_label": "R$ 2.500",
+    "prazo_entrega_inicial": "em até 7 dias úteis",
+    "garantia_dias": 60,
+    "garantia_estrutura": "30 dias aplicar 100% do especificado + 30 dias ranqueamento",
+    "modelo": "pacote único (não assinatura)",
+    "entrada": "site ou Instagram — sem senha / sem conectar conta",
+    "stack_valor": {
+      "itens": [
+        { "label": "Análise da sua presença online", "preco": 1997 },
+        { "label": "Mapa claro e passo-a-passo do que fazer", "preco": 1297 },
+        { "label": "Radar espião de concorrentes", "preco": 897 },
+        { "label": "Carrosséis prontos para postar", "preco": 997 },
+        { "label": "Roteiros prontos para gravar", "preco": 797 },
+        { "label": "Conteúdo novo toda semana · 30 dias", "preco": 2997 }
+      ],
+      "total_separado": 8982,
+      "total_label": "R$ 8.982",
+      "bonus": {
+        "label": "Consultor de vídeo viral",
+        "preco": 997,
+        "tag": "Bônus no Firemode",
+        "descricao": "Viu um vídeo e gostou? Manda no WhatsApp. A gente devolve tudo pronto — título, roteiro e legenda — pra você só ligar a câmera e gravar."
+      }
+    }
+  },
+  "navegacao": [
+    { "id": "hero", "label": "Início" },
+    { "id": "dor", "label": "Problema" },
+    { "id": "metodo", "label": "Método" },
+    { "id": "conteudo", "label": "Peça" },
+    { "id": "ia", "label": "IA" },
+    { "id": "como", "label": "Como" },
+    { "id": "depois", "label": "Entrega" },
+    { "id": "garantia", "label": "Garantia" },
+    { "id": "preco", "label": "Investimento" },
+    { "id": "interesse", "label": "Começar", "cta": true }
+  ],
+  "guia_sticky": [
+    { "secao": "hero", "proximo": "dor", "label": "Você sente essa dor?" },
+    { "secao": "dor", "proximo": "metodo", "label": "Como resolver isso?" },
+    { "secao": "metodo", "proximo": "ia", "label": "E a IA?" },
+    { "secao": "ia", "proximo": "como", "label": "Como fazemos isso" },
+    { "secao": "como", "proximo": "depois", "label": "O que você recebe" },
+    { "secao": "depois", "proximo": "garantia", "label": "E a garantia?" },
+    { "secao": "garantia", "proximo": "preco", "label": "Ver o investimento" },
+    { "secao": "preco", "proximo": "interesse", "label": "Quero o diagnóstico" }
+  ],
+  "ctas": [
+    "Quero o diagnóstico",
+    "Quero começar",
+    "Começar"
+  ],
+  "secoes": {
+    "hero": {
+      "id": "hero",
+      "tema": "dark",
+      "subtitulo_comum": "O problema não é falta de esforço. É que, com os pontos de contato da sua empresa desalinhados, cada esforço seu só serve para empurrar o cliente para o bolso do seu concorrente.\n\nManda seu site ou seu Instagram. A gente descobre onde você está perdendo dinheiro e te dá o mapa do que consertar.",
+      "cta": "Quero o diagnóstico",
+      "placeholder": "site.com.br ou @instagram",
+      "form_footer": "Análise, o que fazer, textos e conteúdo de redes (posts e vídeos) renovado toda semana durante 30 dias.\n\nTem site? Olhamos a presença. Só Instagram? Começamos pelo que existe — sem pedir senha.",
+      "variantes_ab": [
+        {
+          "id": "2",
+          "titulo": "O cliente te procura. Quem ele acha?"
+        },
+        {
+          "id": "3",
+          "titulo": "Você posta. O concorrente aparece."
+        },
+        {
+          "id": "7",
+          "titulo": "Seu esforço está fortalecendo outro?"
+        },
+        {
+          "id": "8",
+          "titulo": "O cliente procura, mas você não aparece."
+        }
+      ]
+    },
+    "video": {
+      "id": "video",
+      "status": "oculto_temporariamente",
+      "kicker": "Em um minuto",
+      "titulo": "Veja como funciona"
+    },
+    "problema": {
+      "id": "dor",
+      "tema": "dark",
+      "titulo": "Você posta.",
+      "titulo_accent": "Às vezes anuncia.",
+      "titulo_tail": "E até tem um site.",
+      "titulo_muted": "Mesmo assim, o cliente te procura… e não te acha. Ou acha o concorrente.",
+      "cards": [
+        {
+          "titulo": "Seu esforço alimenta o rival",
+          "texto": "Pior: em alguns casos seu esforço vira combustível para seu concorrente. Você posta, ele aparece. Você anuncia, ele converte — porque a presença dele está alinhada nos pontos em que o cliente decide, e a sua não."
+        },
+        {
+          "titulo": "Falta mapa, não criatividade",
+          "texto": "O problema quase nunca é só falta de criatividade. É falta de mapa técnico e comercial: onde a presença está forte, onde está furada, e o que o mercado já ocupa no seu lugar. Post bom em base furada não vira demanda."
+        },
+        {
+          "titulo": "IA genérica não resolve",
+          "texto": "Cair no papo de “IA escreve o post pra mim” não é inteligente — é só artificial. Texto genérico em cima de presença furada não cria demanda. Cria ruído."
+        }
+      ]
+    },
+    "metodo": {
+      "id": "metodo",
+      "tema": "light",
+      "kicker": "O Diagnóstico Firemode",
+      "titulo": "Dois olhares.",
+      "titulo_accent": "Um mapa.",
+      "subtitulo": "Cruzamos o que o mercado vê com o que está tecnicamente furado — e seguimos até o que publicar: textos, posts e vídeos.",
+      "cards": [
+        {
+          "titulo": "Olhar de mercado",
+          "texto": "O que aparece quando alguém busca, compara e julga a marca: perfil público, busca, Maps, rastros na web — e o que o concorrente já ocupa no seu lugar."
+        },
+        {
+          "titulo": "Olhar técnico",
+          "texto": "O que trava o crescimento orgânico: site, SEO, Google Meu Negócio, autoridade de busca — e se o site está pronto pra IA (llms.txt, crawlers)."
+        },
+        {
+          "titulo": "Sem pedir senha",
+          "texto": "Não entramos na sua conta. Evidência pública + leitura técnica — profundidade sem virar mais um login de agência."
+        },
+        {
+          "titulo": "Do mapa à ação",
+          "texto": "Análise, o que fazer primeiro, textos e conteúdo pra publicar — sem deixar você com um PDF e zero execução."
+        }
+      ],
+      "mock_relatorio": "DashApresentacaoMock — scorecard, top concorrentes, análise técnica, o que fazer primeiro"
+    },
+    "conteudo": {
+      "id": "conteudo",
+      "tema": "light",
+      "kicker": "Do relatório ao post",
+      "titulo": "Não para na Análise.",
+      "titulo_accent": "Vira a próxima peça.",
+      "subtitulo": "Analisamos suas Capas, Headlines e legendas — e a leitura: o que acertou, o CTA, a intenção, e o que publicar em seguida porque os comentários pediram.",
+      "mock": "PostReelMock — capa + análise da peça"
+    },
+    "ia": {
+      "id": "ia",
+      "tema": "light",
+      "kicker": "Visibilidade em IA",
+      "titulo": "Google não é o único lugar",
+      "titulo_accent": "onde te procuram.",
+      "subtitulo": "Cliente pergunta pro ChatGPT. Se a marca não está preparada — ou a IA cita o concorrente — você some no canal que mais cresce.",
+      "jornada_consciencia": [
+        "nao_sei_que_tenho_problema",
+        "descobri_o_problema",
+        "preciso_resolver"
+      ],
+      "cards": [
+        {
+          "estagio": "nao_sei",
+          "titulo": "Você nem sabe se aparece",
+          "texto": "Cliente já pergunta no ChatGPT, Gemini e Perplexity sobre o seu nicho. A maioria das marcas não acompanha esse canal — e some sem perceber."
+        },
+        {
+          "estagio": "descobriu",
+          "titulo": "Aí a gente mostra o gap",
+          "texto": "Rodamos as perguntas reais do mercado: a marca aparece, some, ou o concorrente leva a citação? Você vê, com nome e contexto, o que a IA está respondendo hoje."
+        },
+        {
+          "estagio": "resolver",
+          "titulo": "E o que fazer pra ser citado",
+          "texto": "Não para no susto. O diagnóstico aponta o que falta no site e no conteúdo — e o plano diz o que publicar e corrigir pra a IA te recomendar."
+        }
+      ]
+    },
+    "como": {
+      "id": "como",
+      "tema": "light",
+      "kicker": "Como funciona",
+      "titulo": "Três passos",
+      "subtitulo": "Analisar, priorizar e executar — do mapa ao post, com material novo toda semana.",
+      "passos": [
+        {
+          "n": "01",
+          "titulo": "Analisamos sua presença em 360°",
+          "texto": "Você manda site ou Instagram — sem conectar ou mandar senha. Cruzamos a visão do usuário e das máquinas de busca: Google, IA, redes, ads e concorrentes."
+        },
+        {
+          "n": "02",
+          "titulo": "Mostramos o que resolver primeiro",
+          "texto": "O diagnóstico prioriza o que trava hoje: SEO, GMB, copy, post. O plano diz o que fazer primeiro — sem ficar inventando no escuro."
+        },
+        {
+          "n": "03",
+          "titulo": "Entregamos o material pra executar",
+          "texto": "Posts e vídeos de 7 em 7 dias, alinhados ao plano — frescos, não um pacote velho na pasta. Com as alterações aplicadas, você começa a ver os resultados na mesma semana."
+        }
+      ]
+    },
+    "entrega": {
+      "id": "depois",
+      "tema": "light",
+      "kicker": "O que entra no valor",
+      "titulo": "Análise, plano, textos e",
+      "titulo_accent": "conteúdo vivo.",
+      "subtitulo": "Por esse valor você não leva só o mapa. Leva o que fazer, o que publicar — e o acompanhamento pra não ficar com material velho.",
+      "entregaveis": [
+        {
+          "n": "01",
+          "titulo": "A análise",
+          "texto": "Onde a presença some, o que está furado e o que o mercado já ocupa no seu lugar."
+        },
+        {
+          "n": "02",
+          "titulo": "Como resolver",
+          "texto": "O plano do que fazer — priorizado, em ordem, pronto pra aplicar. Não é teoria."
+        },
+        {
+          "n": "03",
+          "titulo": "Os textos",
+          "texto": "Copy alinhada ao diagnóstico: o que dizer, onde e por quê — sem texto genérico de IA solto."
+        },
+        {
+          "n": "04",
+          "titulo": "7 dias de conteúdo",
+          "texto": "Nas redes: posts e vídeos pros próximos 7 dias. Durante 30 dias chegam novos toda semana — porque receber 30 de uma vez só vira lote velho e atrasado."
+        },
+        {
+          "n": "05",
+          "titulo": "Concorrentes no radar",
+          "texto": "Acompanhamos quem disputa o mesmo cliente, pra você não postar no escuro."
+        },
+        {
+          "n": "06",
+          "titulo": "Consultor de vídeo viral",
+          "bonus": true,
+          "texto": "Viu um vídeo e gostou? Manda pra gente via WhatsApp. Faremos o roteiro com título forte e legenda — no seu tom, pronto pra gravar."
+        }
+      ]
+    },
+    "garantia": {
+      "id": "garantia",
+      "tema": "dark",
+      "kicker": "Nossa palavra",
+      "titulo": "Aplicou o plano.",
+      "titulo_accent": "Não melhorou? Devolvemos 100%.",
+      "subtitulo": "60 dias. Aplicou 100% do que foi especificado no diagnóstico e os números não melhoraram? O investimento volta. Risco nosso.",
+      "cards": [
+        {
+          "destaque": "60",
+          "titulo": "dias de garantia",
+          "texto": "30 dias pra aplicar 100% do que foi especificado · 30 dias pro Google e as ferramentas ranquearem."
+        },
+        {
+          "titulo": "Risco nosso",
+          "texto": "Aplicou 100% do que foi especificado — no dia a dia — e não melhorou? Devolvemos 100% do seu investimento."
+        }
+      ]
+    },
+    "preco": {
+      "id": "preco",
+      "tema": "light",
+      "kicker": "Investimento",
+      "titulo": "Tudo isso sem preço de agência.",
+      "subtitulo": "O mesmo pacote numa agência costuma levar semanas e custar bem mais.",
+      "comparativo_esquerda": {
+        "label": "Outras análises",
+        "lead": "O que costumam entregar",
+        "itens": [
+          "Relatório / PDF da análise",
+          "Às vezes um checklist genérico",
+          "Conteúdos genéricos com IA",
+          "Sem suporte nenhum",
+          "Quer mudar algo? Paga novamente",
+          "Você que se vire pra executar"
+        ]
+      },
+      "comparativo_direita": {
+        "label": "Firemode",
+        "lead": "O que fazemos por você",
+        "itens_com_preco_ancora": true,
+        "ver": "oferta.stack_valor"
+      },
+      "destaque_bonus_e_pacote": {
+        "bonus": "ver oferta.stack_valor.bonus",
+        "pacote_label": "Pacote Firemode",
+        "pacote_preco": "R$ 497",
+        "pacote_meta": "Primeira entrega em até 7 dias úteis"
+      },
+      "nota": [
+        "Conteúdo novo toda semana durante 30 dias — porque 30 de uma vez só envelhece.",
+        "Viu um vídeo e gostou? Manda: a gente faz o roteiro personalizado.",
+        "Garantia de 60 dias: aplicar 100% do que foi especificado (30 dias) + tempo de ranqueamento (30 dias)."
+      ],
+      "cta": "Quero começar"
+    },
+    "interesse": {
+      "id": "interesse",
+      "tema": "light",
+      "kicker": "Começar",
+      "titulo": "Peça o diagnóstico",
+      "subtitulo": "Site ou Instagram. Sem senha. Análise, plano, textos e conteúdo. 60 dias de garantia.",
+      "formulario": "FormInteresse — site/Instagram → WhatsApp / lead"
+    },
+    "faq": {
+      "id": "faq",
+      "tema": "light",
+      "kicker": "Dúvidas",
+      "titulo": "Perguntas rápidas",
+      "rodape": "Firemode · Diagnóstico de presença digital",
+      "itens": [
+        {
+          "q": "O que eu recebo exatamente?",
+          "a": "A análise da presença, o plano do que fazer, os textos, e conteúdo de redes (posts e vídeos) de 7 em 7 dias — durante 30 dias. Acompanhamos concorrentes. E se você mandar um vídeo que gostou, montamos um roteiro personalizado."
+        },
+        {
+          "q": "Por que 7 dias e não 30 de uma vez?",
+          "a": "Porque conteúdo envelhece. Pacote grande vira lote atrasado na pasta. Durante 30 dias, toda semana você recebe o bloco seguinte — fresco, alinhado ao mercado e aos concorrentes."
+        },
+        {
+          "q": "Como funciona o consultor de vídeo viral?",
+          "a": "Se você vir um vídeo e gostar, manda pra gente. A gente faz o roteiro personalizado pra você gravar — no seu contexto, não uma cópia genérica."
+        },
+        {
+          "q": "Precisa da senha do Instagram?",
+          "a": "Não. Não pedimos acesso. Trabalhamos com evidência pública e leitura técnica."
+        },
+        {
+          "q": "Quanto custa e em quanto tempo?",
+          "a": "O pacote é R$ 497, com entrega inicial em até 7 dias úteis. O mesmo tipo de clareza + execução numa agência costuma levar semanas e passar de R$ 2.500."
+        },
+        {
+          "q": "E se eu aplicar e não melhorar?",
+          "a": "Garantia de 60 dias, em duas partes: 30 dias pra você aplicar 100% do que o diagnóstico especificou — cumprindo os requisitos no dia a dia — e 30 dias pro Google e as ferramentas ranquearem. Fez tudo isso e a nota não subiu? Devolvemos 100% do investimento."
+        },
+        {
+          "q": "Como funcionam os 30 + 30 dias da garantia?",
+          "a": "Nos primeiros 30 dias você executa 100% do plano descrito no diagnóstico (posts, ajustes, tarefas — o que estiver no mapa, diariamente quando for o caso). Nos 30 seguintes, o Google e as demais ferramentas precisam de tempo pra indexar e ranquear. Sem aplicar o que foi especificado, a garantia não vale."
+        },
+        {
+          "q": "Vocês só entregam o relatório?",
+          "a": "Não. Depois do mapa vem a peça: post/reel com capa, headline e legenda — e a análise do conteúdo (o que acertou, CTA, intenção). Se os comentários mostram que o público quer algo a mais, a sequência comercial já aponta o próximo post."
+        },
+        {
+          "q": "Vocês olham se a IA recomenda a marca?",
+          "a": "Sim. O diagnóstico inclui preparação técnica (llms.txt, crawlers) e uma leitura de visibilidade em IA: o que tende a aparecer quando alguém pergunta no ChatGPT / Gemini / Perplexity — e o que falta pra ser citado."
+        },
+        {
+          "q": "Não tenho site. Serve?",
+          "a": "Serve. Olhamos o Instagram e o que falta. Site ausente vira achado do diagnóstico — não barreira."
+        },
+        {
+          "q": "Já tenho agência.",
+          "a": "Ótimo. A gente mostra se o esforço está no lugar certo — e entrega material pra não depender só de post genérico."
+        }
+      ]
+    }
+  },
+  "notas_para_consultor": {
+    "produto_vs_signal": "Esta LP vende diagnóstico pontual (R$ 497). O site ComercialTurbinado/firemode (Signal) vende fábrica recorrente via WhatsApp (planos mensais). DNA compartilhado: dor, anti-IA genérica, radar, manda-vídeo→roteiro.",
+    "promessa_central": "Mapa 360° da presença + o que fazer primeiro + textos/conteúdo semanal por 30 dias + garantia 60 dias, sem pedir senha.",
+    "canais_citados": [
+      "Site",
+      "SEO",
+      "Google Meu Negócio",
+      "Busca / autoridade",
+      "Instagram",
+      "Ads",
+      "IA (ChatGPT/Gemini/Perplexity)",
+      "Concorrentes"
+    ],
+    "objecoes_cobertas_no_faq": [
+      "o que recebe",
+      "frequencia conteudo",
+      "consultor viral",
+      "senha",
+      "preco/prazo",
+      "garantia",
+      "so PDF",
+      "IA",
+      "sem site",
+      "ja tem agencia"
+    ]
+  }
+}

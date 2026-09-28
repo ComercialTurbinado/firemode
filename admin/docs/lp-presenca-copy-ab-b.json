@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "pagina": "/vender/presenca/b",
+    "variante": "B",
+    "controle": "/vender/presenca",
+    "repo": "ComercialTurbinado/admin-firemode",
+    "marca": "Firemode",
+    "produto": "Diagnóstico de Presença e Inteligência de Conteúdo",
+    "gerado_em": "2026-07-29",
+    "uso": "A/B — sem garantias; esteira 197/297/497/Enterprise; 7 dias = Pacote Ativo"
+  },
+  "seo": {
+    "title": "Diagnóstico de Presença Digital | Firemode",
+    "description": "Análise de presença, plano do que consertar e — no Pacote Ativo — 7 dias de conteúdo fresco. Sem senha. Sem enrolação."
+  },
+  "oferta": {
+    "modelo_esteira": [
+      {
+        "nivel": "1",
+        "nome": "Radar de Entrada",
+        "preco_label": "R$ 197",
+        "entregas": [
+          "Leitura rápida da presença (site ou Instagram)",
+          "Principais gaps apontados",
+          "Primeiro direcionamento do que corrigir"
+        ]
+      },
+      {
+        "nivel": "2",
+        "nome": "Diagnóstico Essencial",
+        "preco_label": "R$ 297",
+        "entregas": [
+          "Análise completa da presença",
+          "Plano inicial de correção priorizado",
+          "Textos-base (bio, headlines, CTAs)"
+        ]
+      },
+      {
+        "nivel": "3",
+        "nome": "Pacote Firemode Ativo",
+        "preco_label": "R$ 497",
+        "badge": "Recomendado",
+        "entregas": [
+          "Análise 360° (site, busca, GMB, redes, IA)",
+          "Plano claro do que fazer primeiro",
+          "1 roteiro por dia individualizado para reels, 7 por semana, sempre atualizado no seu nicho",
+          "Monitoramento de concorrentes"
+        ]
+      },
+      {
+        "nivel": "4",
+        "nome": "Firemode Enterprise",
+        "preco_label": "Sob consulta",
+        "entregas": [
+          "Escopo e ritmo sob medida",
+          "Monitoramento avançado contínuo",
+          "Operação estratégica dedicada"
+        ]
+      }
+    ],
+    "prazo_entrega_inicial": "em até 7 dias úteis",
+    "entrada": "site ou Instagram — sem senha / sem conectar conta",
+    "diferencial_principal": "Enquanto outros diagnósticos entregam só PDF, o Pacote Ativo (R$ 497) traz análise, plano e 7 dias de conteúdo prático.",
+    "garantia": null
+  },
+  "secoes": {
+    "hero": {
+      "subtitulo_comum": "O problema não é falta de esforço. É que, com os pontos de contato da sua empresa desalinhados, cada esforço seu só serve para empurrar o cliente para o bolso do seu concorrente.\n\nManda seu site ou seu Instagram. A gente descobre onde você está perdendo dinheiro e te dá o mapa do que consertar.",
+      "cta": "Quero o diagnóstico estratégico"
+    },
+    "problema": {
+      "titulo": "Chega de análise que é só um PDF bunitinho."
+    },
+    "como_fazemos": {
+      "descricao": "Você terá em suas mãos o controle total dos seus resultados, a análise mais completa e o guia prático de como e por onde começar a resolver."
+    },
+    "preco": {
+      "titulo": "Escolha o seu nível de entrada",
+      "subtitulo": "Do Radar ao Pacote Ativo (R$ 497) — ou Enterprise sob medida."
+    },
+    "garantia": {
+      "removida": true
+    }
+  }
+}

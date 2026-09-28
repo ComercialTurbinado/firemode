@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | Firemode",
   },
   description:
-    "Descubra como o mercado enxerga sua empresa. Diagnóstico comercial dos pontos de contato — com acompanhamento de score e garantia.",
+    "Veja o que um cliente encontra sobre sua empresa e receba as correções prioritárias para os seus pontos de contato.",
 };
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {

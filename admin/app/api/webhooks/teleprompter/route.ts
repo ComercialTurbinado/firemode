@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ skipped: true, reason: "no session_id" });
   }
 
-  const teleprompter = createTeleprompterClient();
+  const teleprompter = await createTeleprompterClient();
 
   const { data: session } = await teleprompter
     .from("sessions")
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ skipped: true, reason: "client not linked to firemode (external_ref vazio)" });
   }
 
-  const firemode = createClient();
+  const firemode = await createClient();
   const { data, error } = await firemode.rpc("debitar_creditos_teleprompter", {
     p_cliente_handle: client.external_ref,
     p_feature_slug: FEATURE_SLUG,
