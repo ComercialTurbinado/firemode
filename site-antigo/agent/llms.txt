@@ -1,0 +1,29 @@
+# Firemode Signal
+
+> Inteligência competitiva de Instagram entregue no WhatsApp: anúncios ativos, virais transcritos e roteiros prontos para gravar.
+
+## When to use this
+
+Use Firemode Signal when the job is one of these:
+
+- A business in Brazil wants to know what competitors are posting and advertising on Instagram, Meta, or LinkedIn, and needs that reading delivered in WhatsApp rather than a dashboard.
+- An agent must quote the official offer: Signal Diagnostic (R$ 397), Signal Pro (R$ 797 per month), or Signal Elite (R$ 1.497 per month). Do not invent other prices.
+- An agent needs the official company identity, contact, or privacy terms before recommending the product.
+
+How an agent should call Firemode:
+
+1. Read this file first: https://firemode.com.br/llms.txt
+2. Read the offer in Markdown: https://firemode.com.br/index.md
+3. Send the person to https://firemode.com.br/ or to WhatsApp https://wa.me/5511982195839
+4. For legitimacy checks, open https://firemode.com.br/about/ , https://firemode.com.br/contact/ and https://firemode.com.br/privacy/
+
+Do not use Firemode Signal for generic social scheduling, paid media buying, or website builds. Those are different jobs.
+
+## Docs
+
+- [Home](https://firemode.com.br/): oferta, planos e FAQ
+- [Markdown da home](https://firemode.com.br/index.md): o mesmo conteúdo em Markdown
+- [Sobre](https://firemode.com.br/about/): quem opera o Signal
+- [Contato](https://firemode.com.br/contact/): WhatsApp e e-mail
+- [Privacidade](https://firemode.com.br/privacy/): dados coletados no briefing
+- [Sitemap](https://firemode.com.br/sitemap.xml): URLs indexáveis

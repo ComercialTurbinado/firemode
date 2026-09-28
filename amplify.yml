@@ -3,13 +3,21 @@ frontend:
   phases:
     preBuild:
       commands:
-        - mkdir -p dist
+        - mkdir -p dist/signal dist/about dist/contact dist/privacy
         - cp site-antigo/landing-radar-instagram.html dist/index.html
         - cp site-antigo/protocolo-de-performance.html dist/protocolo-de-performance.html
-        - mkdir -p dist/signal && cp site-antigo/signal.html dist/signal/index.html
+        - cp site-antigo/signal.html dist/signal/index.html
+        - cp site-antigo/agent/llms.txt dist/llms.txt
+        - cp site-antigo/agent/index.md dist/index.md
+        - cp site-antigo/agent/sitemap.xml dist/sitemap.xml
+        - cp site-antigo/agent/robots.txt dist/robots.txt
+        - cp site-antigo/agent/404.html dist/404.html
+        - cp site-antigo/agent/about/index.html dist/about/index.html
+        - cp site-antigo/agent/contact/index.html dist/contact/index.html
+        - cp site-antigo/agent/privacy/index.html dist/privacy/index.html
     build:
       commands:
-        - echo "Static build complete"
+        - node scripts/check-agent-readiness.mjs dist
   artifacts:
     baseDirectory: dist
     files:
